@@ -23,13 +23,10 @@ public class Bottom extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        avatarImage1 = new com.tribyte.swing.AvatarImage();
         lbUserName = new javax.swing.JLabel();
         lbRole = new javax.swing.JLabel();
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-        avatarImage1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/tribyte/icon/avatar.jpg"))); // NOI18N
 
         lbUserName.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lbUserName.setForeground(new java.awt.Color(255, 255, 255));
@@ -43,9 +40,7 @@ public class Bottom extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(avatarImage1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(60, 60, 60)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lbUserName)
                     .addComponent(lbRole))
@@ -55,13 +50,10 @@ public class Bottom extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lbUserName)
-                        .addGap(3, 3, 3)
-                        .addComponent(lbRole))
-                    .addComponent(avatarImage1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(lbUserName)
+                .addGap(3, 3, 3)
+                .addComponent(lbRole)
+                .addContainerGap(7, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -76,7 +68,6 @@ public class Bottom extends javax.swing.JPanel {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.tribyte.swing.AvatarImage avatarImage1;
     private javax.swing.JLabel lbRole;
     private javax.swing.JLabel lbUserName;
     // End of variables declaration//GEN-END:variables
