@@ -18,7 +18,7 @@ public class Message extends javax.swing.JDialog {
     private Animator animator;
     private Glass glass;
     private boolean show;
-    private MessageType messageType = MessageType.CANCEL;
+    private MessageType messageType = MessageType.CANCEL; 
 
     public Message(JFrame fram) {
         super(fram, true);
@@ -28,11 +28,20 @@ public class Message extends javax.swing.JDialog {
     }
     
     private void init() {
+        /*txt = new javax.swing.JTextPane();
+        txtsub = new javax.swing.JTextPane();
+        lbTitle = new javax.swing.JLabel();*/
+        
         setBackground(new Color(0, 0, 0, 0));
+        //javax.swing.text.StyledDocument doc = txt.getStyledDocument();
+        //javax.swing.text.SimpleAttributeSet center = new javax.swing.text.SimpleAttributeSet();
         StyledDocument doc1 = txt.getStyledDocument();
         SimpleAttributeSet center = new SimpleAttributeSet();
+        
+        //javax.swing.text.StyleConstants.setAlignment(center, javax.swing.text.StyleConstants.ALIGN_CENTER);
         StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
         doc1.setParagraphAttributes(0, doc1.getLength(), center, false);
+        
         txt.setOpaque(false);
         txt.setBackground(new Color(0, 0, 0, 0));
         StyledDocument doc2 = txtsub.getStyledDocument();
@@ -81,9 +90,17 @@ public class Message extends javax.swing.JDialog {
         this.show = show;
         animator.start();
     }
-    public void showMessage(String title, String message, String submessage) {
+    public void showMessage(/*MessageType type,*/ String title, String message, String submessage) {
+        /*this.messageType = type;*/
         fram.setGlassPane(glass);
         glass.setVisible(true);
+        
+        /*if (type == MessageType.SUCCESS) {
+            lbTitle.setForeground(new Color(4, 149, 22));
+        } else {
+            lbTitle.setForeground(new Color(255, 0, 0));
+        }*/
+        
         lbTitle.setText(title);
         txt.setText(message);
         txtsub.setText(submessage);
@@ -132,7 +149,7 @@ public class Message extends javax.swing.JDialog {
     }//GEN-LAST:event_cmdYesDeleteActionPerformed
 
     public static enum MessageType {
-        CANCEL, YESDELETE
+        CANCEL, YESDELETE/*,SUCCESS*/
     }
 
     // Variables declaration - do not modify                     

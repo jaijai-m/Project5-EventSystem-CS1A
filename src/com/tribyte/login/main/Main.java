@@ -9,7 +9,7 @@ import net.miginfocom.swing.MigLayout;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
-
+import com.tribyte.dashboard.main.DashboardMain;
 
 public class Main extends javax.swing.JFrame {
     
@@ -154,6 +154,16 @@ public class Main extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> new Main().setVisible(true));
     }
 
+    public void showAdminDashboard() {
+        // This creates the dashboard window
+        DashboardMain adminDash = new DashboardMain();
+        
+        // This makes the dashboard visible
+        adminDash.setVisible(true);
+        
+        // Closes the current Login window
+        this.dispose();
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane Background;
     // End of variables declaration//GEN-END:variables
