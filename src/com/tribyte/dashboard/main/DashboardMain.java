@@ -2,12 +2,15 @@ package com.tribyte.dashboard.main;
 
 import com.tribyte.component.Header;
 import com.tribyte.component.Menu;
+import com.tribyte.dialog.MessageLogout;
 import com.tribyte.event.EventMenuSelected;
-import com.tribyte.form.Form1;
-import com.tribyte.form.Form2;
-import com.tribyte.form.Form3;
+import com.tribyte.form.FormEvents;
+import com.tribyte.form.FormCreateEvent;
+import com.tribyte.form.FormEditExistingEvents;
+import com.tribyte.form.FormEditingEvent;
 import com.tribyte.form.FormHome;
 import com.tribyte.form.MainForm;
+import com.tribyte.model.ModelEvents;
 import com.tribyte.model.ModelMenu;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -23,6 +26,8 @@ public class DashboardMain extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(DashboardMain.class.getName());
 
+    private String userRole = "Admin"; 
+    private int userId = 101;
     private Menu menu = new Menu();
     private MigLayout layout;
     private Animator animator;  
@@ -38,40 +43,73 @@ public class DashboardMain extends javax.swing.JFrame {
     private void init() {
         layout = new MigLayout("fill, insets 0, gap 0", "0[]0[fill, grow]0", "0[fill]0");
         body.setLayout(layout);
-        
+
         header = new Header();
         main = new MainForm();
         main.setOpaque(false);
         main.setLayout(new BorderLayout());
-            
-        menu.addEventLogout(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Logout");
+
+        menu.addEventLogout(e -> {
+            MessageLogout msg = new MessageLogout(this);
+            msg.showMessage("Logout Confirmation", "Are you sure you want to log out?");
+
+            if (msg.getMessageType() == MessageLogout.MessageType.CONFIRM) {
+                this.dispose();
             }
         });
-        
+
         menu.setEvent(new EventMenuSelected() {
             @Override
             public void selected(int menuIndex) {
-                System.out.println("Menu Selected " + menuIndex);
-                if(menuIndex == 0) {
-                    showForm(new FormHome());
-                } else if (menuIndex == 1) {
-                    showForm(new Form1());
-                } else if (menuIndex == 2) {
-                    showForm(new Form2());
-                } else if (menuIndex == 3) {
-                    showForm(new Form3());
+                if (menuIndex == 0) {
+                    FormHome home = new FormHome(userRole, userId);
+
+                    home.addEvent(e -> {
+                        if ("EDIT_EVENT".equals(e.getActionCommand())) {
+                            ModelEvents data = (ModelEvents) e.getSource();
+                            FormEditingEvent editingForm = new FormEditingEvent(data);
+                            editingForm.addBackEvent(back -> selected(0));
+                            showForm(editingForm);
+                        }
+                    });
+
+                    showForm(home);
+                } // <--- Only one brace here!
+                else if (menuIndex == 1) {
+                    FormEvents fEvents = new FormEvents(userRole);
+
+                    fEvents.addEvent(e -> {
+                        String command = e.getActionCommand();
+
+                        if ("Create New Event".equals(command)) {
+                            FormCreateEvent createForm = new FormCreateEvent();
+                            createForm.addBackEvent(ev -> selected(1));
+                            showForm(createForm);
+                        } else if ("Edit Existing Events".equals(command) || "Manage Events".equals(command)) {
+                            FormEditExistingEvents editForm = new FormEditExistingEvents(userRole, userId);
+
+                            editForm.addEvent(ev -> {
+                                if ("EDIT_EVENT".equals(ev.getActionCommand())) {
+                                    ModelEvents data = (ModelEvents) ev.getSource();
+                                    FormEditingEvent editingForm = new FormEditingEvent(data);
+                                    editingForm.addBackEvent(back -> selected(1));
+                                    showForm(editingForm);
+                                }
+                            });
+
+                            editForm.addBackEvent(back -> selected(1));
+                            showForm(editForm);
+                        }
+                    });
+                    showForm(fEvents);
                 }
-            }
-        });
-        
+            } 
+        }); 
+
         menu.addMenu(new ModelMenu("Dashboard", new ImageIcon(getClass().getResource("/com/tribyte/icon/dboard.png"))));
         menu.addMenu(new ModelMenu("Events", new ImageIcon(getClass().getResource("/com/tribyte/icon/event.png"))));
-        menu.addMenu(new ModelMenu("Registrations", new ImageIcon(getClass().getResource("/com/tribyte/icon/register.png"))));
         menu.addMenu(new ModelMenu("Attendance", new ImageIcon(getClass().getResource("/com/tribyte/icon/attendance.png"))));
-                
+
         body.add(menu, "w 230!, spany");
         body.add(header, "h 50!, wrap");
         body.add(main, "w 100%, h 100%");
@@ -110,7 +148,7 @@ public class DashboardMain extends javax.swing.JFrame {
             }
         });
         //Starting Form
-        main.showForm(new FormHome());
+        main.showForm(new FormHome(userRole, userId));
     }
 
     private void showForm(Component com) {

@@ -11,7 +11,7 @@ import javax.swing.text.StyleConstants;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
 
-public class Message extends javax.swing.JDialog {
+public class MessageLogout extends javax.swing.JDialog {
 
     private final JFrame fram;
     private Animator animator;
@@ -19,30 +19,27 @@ public class Message extends javax.swing.JDialog {
     private boolean show;
     private MessageType messageType = MessageType.CANCEL;
 
-    public Message(JFrame fram) {
+    public static enum MessageType {
+        CONFIRM, CANCEL
+    }
+
+    public MessageLogout(JFrame fram) {
         super(fram, true);
         this.fram = fram;
         initComponents();
         init();
     }
-    
+
     private void init() {
         setBackground(new Color(0, 0, 0, 0));
 
-        // Text Centering Logic
+        // Center the text in the main JTextPane
         SimpleAttributeSet center = new SimpleAttributeSet();
         StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
-
-        // For txt
         txt.setStyledDocument(txt.getStyledDocument());
         txt.getStyledDocument().setParagraphAttributes(0, txt.getStyledDocument().getLength(), center, false);
         txt.setOpaque(false);
         txt.setBackground(new Color(0, 0, 0, 0));
-
-        // For txtSub
-        txtsub.getStyledDocument().setParagraphAttributes(0, txtsub.getStyledDocument().getLength(), center, false);
-        txtsub.setOpaque(false);
-        txtsub.setBackground(new Color(0, 0, 0, 0));
 
         setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -62,7 +59,7 @@ public class Message extends javax.swing.JDialog {
 
             @Override
             public void end() {
-                if (show == false) {
+                if (!show) {
                     dispose();
                     glass.setVisible(false);
                 }
@@ -75,8 +72,8 @@ public class Message extends javax.swing.JDialog {
         glass = new Glass();
     }
 
-    private void startAnimator (boolean show) {
-        if(animator.isRunning()) {
+    private void startAnimator(boolean show) {
+        if (animator.isRunning()) {
             float f = animator.getTimingFraction();
             animator.stop();
             animator.setStartFraction(1f - f);
@@ -86,33 +83,39 @@ public class Message extends javax.swing.JDialog {
         this.show = show;
         animator.start();
     }
-    public void showMessage(String title, String message, String submessage) {
+
+    public void showMessage(String title, String message) {
         fram.setGlassPane(glass);
         glass.setVisible(true);
+
         lbTitle.setText(title);
         txt.setText(message);
-        txtsub.setText(submessage);
-        pack();
-        if (title.toLowerCase().contains("updat")) {
+
+        // Style based on Title content
+        if (title.toLowerCase().contains("logout")) {
+            lbTitle.setForeground(new Color(4, 149, 22)); // Green for Title
+            cmdConfim.setText("Yes, Logout");
+            cmdConfim.setBackground(new Color(250, 82, 82)); // Red for Button
+        } else if (title.toLowerCase().contains("updat")) {
             cmdConfim.setText("Update Event");
-            cmdConfim.setBackground(new Color(4, 149, 22)); // Green for Update
+            cmdConfim.setBackground(new Color(4, 149, 22));
             lbTitle.setForeground(new Color(4, 149, 22));
-            lbIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/tribyte/icon/sync.png")));
         } else {
             cmdConfim.setText("Yes, Delete Event");
-            cmdConfim.setBackground(new Color(250, 82, 82)); 
+            cmdConfim.setBackground(new Color(250, 82, 82));
             lbTitle.setForeground(new Color(250, 82, 82));
-            lbIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/tribyte/icon/caution.png")));
         }
+
+        pack();
         setLocationRelativeTo(fram);
         startAnimator(true);
         setVisible(true);
     }
-    
+
     public void closeMessage() {
         startAnimator(false);
     }
-    
+
     public MessageType getMessageType() {
         return messageType;
     }
@@ -124,10 +127,8 @@ public class Message extends javax.swing.JDialog {
         background1 = new com.tribyte.dialog.Background();
         cmdConfim = new com.tribyte.swing.ButtonDBoard();
         cmdCancel = new com.tribyte.swing.ButtonDBoard();
-        lbIcon = new javax.swing.JLabel();
         lbTitle = new javax.swing.JLabel();
         txt = new javax.swing.JTextPane();
-        txtsub = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
@@ -146,9 +147,6 @@ public class Message extends javax.swing.JDialog {
         cmdCancel.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         cmdCancel.addActionListener(this::cmdCancelActionPerformed);
 
-        lbIcon.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/tribyte/icon/caution.png"))); // NOI18N
-
         lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         lbTitle.setForeground(new java.awt.Color(250, 82, 82));
         lbTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -162,13 +160,6 @@ public class Message extends javax.swing.JDialog {
         txt.setFocusable(false);
         txt.setPreferredSize(null);
 
-        txtsub.setEditable(false);
-        txtsub.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 20, 1, 20));
-        txtsub.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txtsub.setForeground(new java.awt.Color(76, 76, 76));
-        txtsub.setText("Message Text\nSimple");
-        txtsub.setFocusable(false);
-
         javax.swing.GroupLayout background1Layout = new javax.swing.GroupLayout(background1);
         background1.setLayout(background1Layout);
         background1Layout.setHorizontalGroup(
@@ -179,12 +170,7 @@ public class Message extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addComponent(cmdConfim, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(15, 15, 15))
-            .addComponent(lbIcon, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(lbTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, background1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(txtsub)
-                .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, background1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -193,15 +179,11 @@ public class Message extends javax.swing.JDialog {
         background1Layout.setVerticalGroup(
             background1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, background1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lbIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbTitle)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtsub, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(45, 45, 45)
+                .addComponent(lbTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addComponent(txt, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(30, 30, 30)
                 .addGroup(background1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cmdConfim, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cmdCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -232,17 +214,12 @@ public class Message extends javax.swing.JDialog {
         closeMessage();
     }//GEN-LAST:event_cmdConfimActionPerformed
 
-    public static enum MessageType {
-        CANCEL, CONFIRM
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.tribyte.dialog.Background background1;
     private com.tribyte.swing.ButtonDBoard cmdCancel;
     private com.tribyte.swing.ButtonDBoard cmdConfim;
-    private javax.swing.JLabel lbIcon;
     private javax.swing.JLabel lbTitle;
     private javax.swing.JTextPane txt;
-    private javax.swing.JTextPane txtsub;
     // End of variables declaration//GEN-END:variables
 }

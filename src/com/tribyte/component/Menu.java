@@ -45,8 +45,6 @@ public class Menu extends javax.swing.JPanel {
         panelMenu.setOpaque(false);
         layout = new MigLayout("fillx, wrap", "0[fill]0", "[]0[]3[]0");
         panelMenu.setLayout(layout);
-        //add(cmdMenu, "pos 1al 0al 100% 50");
-        //add(header);
         add(panelMenu);
         add(cmdLogout, "pos 1al 1al 100% 100, height 60!");
         add(bottom);
@@ -64,16 +62,6 @@ public class Menu extends javax.swing.JPanel {
         item.addEvent(event);
         panelMenu.add(item);
     }
-    
-    /*
-    private void createButtonMenu() {
-        cmdMenu = new JButton();
-        cmdMenu.setContentAreaFilled(false);
-        cmdMenu.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        cmdMenu.setIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/menu.png")));
-        cmdMenu.setBorder(new EmptyBorder(5, 12, 5, 12));
-    }
-    */
 
     private void createButtonLogout() {
         cmdLogout = new ButtonCustomDBoard();
@@ -119,12 +107,6 @@ public class Menu extends javax.swing.JPanel {
             }
         }
     }
-
-    /*
-    public void addEventMenu(ActionListener event) {
-        cmdMenu.addActionListener(event);
-    }
-    */
     
     public void addEventLogout(ActionListener event) {
         cmdLogout.addActionListener(event);

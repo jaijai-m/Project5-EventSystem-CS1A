@@ -9,16 +9,16 @@ public class Action extends javax.swing.JPanel {
 
     public Action(ModelAction data) {
         initComponents();
-        buttonDBoard2.addActionListener(new ActionListener() {
+        btnEdit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 data.getEvent().update(data.getEvents());
             }
         });
-        buttonDBoard3.addActionListener(new ActionListener() {
+        btnDelete.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                data.getEvent().update(data.getEvents());
+                data.getEvent().delete(data.getEvents());
             }
         });
     }
@@ -35,48 +35,30 @@ public class Action extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonDBoard2 = new com.tribyte.swing.ButtonDBoard();
-        buttonDBoard3 = new com.tribyte.swing.ButtonDBoard();
+        btnEdit = new com.tribyte.swing.ButtonDBoard();
+        btnDelete = new com.tribyte.swing.ButtonDBoard();
 
-        buttonDBoard2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/tribyte/icon/edit.png"))); // NOI18N
-        buttonDBoard2.addActionListener(this::buttonDBoard2ActionPerformed);
+        btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/tribyte/icon/edit.png"))); // NOI18N
+        btnEdit.setPreferredSize(new java.awt.Dimension(30, 30));
+        btnEdit.addActionListener(this::btnEditActionPerformed);
+        add(btnEdit);
 
-        buttonDBoard3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/tribyte/icon/delete.png"))); // NOI18N
-        buttonDBoard3.addActionListener(this::buttonDBoard3ActionPerformed);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(buttonDBoard2, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(buttonDBoard3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(buttonDBoard3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(buttonDBoard2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
+        btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/tribyte/icon/delete.png"))); // NOI18N
+        btnDelete.addActionListener(this::btnDeleteActionPerformed);
+        add(btnDelete);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void buttonDBoard2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDBoard2ActionPerformed
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_buttonDBoard2ActionPerformed
+    }//GEN-LAST:event_btnEditActionPerformed
 
-    private void buttonDBoard3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDBoard3ActionPerformed
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_buttonDBoard3ActionPerformed
+    }//GEN-LAST:event_btnDeleteActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.tribyte.swing.ButtonDBoard buttonDBoard2;
-    private com.tribyte.swing.ButtonDBoard buttonDBoard3;
+    private com.tribyte.swing.ButtonDBoard btnDelete;
+    private com.tribyte.swing.ButtonDBoard btnEdit;
     // End of variables declaration//GEN-END:variables
 }

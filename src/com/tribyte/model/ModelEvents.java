@@ -5,67 +5,100 @@ import com.tribyte.swing.table.ModelAction;
 
 public class ModelEvents {
 
-    public int getFilledSlots() {
-        return filledSlots;
-    }
+    private int eventID;
+    private int ownerID;
+    private String name;
+    private String date;
+    private String venue;
+    private int filledSlots;
+    private int maxSlots;
+    private String status;
+    private String joinedTime;
+    private String leftTime;  
+    private String professor;
+    private String accessibility;
+    private String eventCode;
 
-    public void setFilledSlots(int filledSlots) {
+    public ModelEvents(int eventID, int ownerID, String name, String date, String venue, int filledSlots, int maxSlots, String status, String joinedTime, String leftTime, String professor, String accessibility, String eventCode) {
+        this.eventID = eventID;
+        this.ownerID = ownerID;
+        this.name = name;
+        this.date = date;
+        this.venue = venue;
         this.filledSlots = filledSlots;
-    }
-
-    public int getMaxSlots() {
-        return maxSlots;
-    }
-
-    public void setMaxSlots(int maxSlots) {
         this.maxSlots = maxSlots;
+        this.status = status;
+        this.joinedTime = joinedTime;
+        this.leftTime = leftTime;
+        this.professor = professor;
+        this.accessibility = accessibility;
+        this.eventID = eventID;
+        this.eventCode = eventCode;
     }
 
+    public ModelEvents() {
+    }
+
+    // ID Getters
+    public int getEventID() {
+        return eventID;
+    }
+
+    public int getOwnerID() {
+        return ownerID;
+    }
+
+    // Text Getters & Setters
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getDate() {
         return date;
     }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
-
     public String getVenue() {
         return venue;
     }
 
-    public void setVenue(String venue) {
-        this.venue = venue;
+    public String getStatus() {
+        return status;
     }
 
-    
-
-    public ModelEvents(String name, String date, String venue, int filledSlots, int maxSlots) {
-        this.name = name;
-        this.date = date;
-        this.venue = venue;
-        this.filledSlots = filledSlots;
-        this.maxSlots = maxSlots;
+    public String getJoinedTime() {
+        return joinedTime;
     }
 
-    public ModelEvents() {
+    public String getLeftTime() {
+        return leftTime;
+    }
+
+    // Slot Getters
+    public int getFilledSlots() {
+        return filledSlots;
+    }
+
+    public int getMaxSlots() {
+        return maxSlots;
     }
     
-    private String name;
-    private String date;
-    private String venue;
-    private int filledSlots;
-    private int maxSlots;
+    public String getProfessor() {
+        return professor;
+    }
+
+    public String getAccessibility() {
+        return accessibility;
+    }
     
-    public Object[]toRowTable(EventAction event) {
-        String slotDisplay = getFilledSlots() + " / " + getMaxSlots();
-        return new Object[]{name, date, venue, slotDisplay, new ModelAction(this, event)};
+    public String getEventCode() {
+        return eventCode;
+    }
+
+    //Table in FormHome
+    public Object[] toRowTable(EventAction event) {
+        String slotDisplay = filledSlots + " / " + maxSlots;
+
+        return new Object[]{name, date, venue, slotDisplay, new ModelAction(this, event)
+        };
     }
 }

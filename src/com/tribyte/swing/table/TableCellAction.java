@@ -21,7 +21,6 @@ public class TableCellAction extends DefaultCellEditor{
         return cell;
     }
 
-    // Pass data to cell render when not clicking on cell
     @Override
     public Object getCellEditorValue() {
         return data; 
