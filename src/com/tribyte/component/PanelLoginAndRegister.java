@@ -3,12 +3,16 @@ package com.tribyte.component;
 import com.tribyte.swing.Button;
 import com.tribyte.swing.MyPasswordField;
 import com.tribyte.swing.MyTextField;
+import com.tribyte.utilities.PasswordSecurity;
+import database.connection.DatabaseConnection;
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.Cursor;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 import net.miginfocom.swing.MigLayout;
 
 
@@ -197,5 +201,8 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel login;
     private javax.swing.JPanel register;
+
+    private MyTextField txtEmailLogin;
+    private MyPasswordField txtPasswordLogin;
     // End of variables declaration//GEN-END:variables
 }

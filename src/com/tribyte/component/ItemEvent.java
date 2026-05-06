@@ -9,7 +9,10 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 
 public class ItemEvent extends JPanel {
 
@@ -36,12 +39,10 @@ public class ItemEvent extends JPanel {
         btnJoin.setForeground(java.awt.Color.WHITE);
         btnJoin.setCursor(new Cursor(Cursor.HAND_CURSOR));
         
-        javax.swing.border.Border line = javax.swing.BorderFactory.createMatteBorder(0, 1, 0, 0, new java.awt.Color(255, 255, 255, 80));
-        // Add some "breathing room" (padding) so the text isn't touching the line
-        javax.swing.border.Border margin = javax.swing.BorderFactory.createEmptyBorder(0, 10, 0, 0);
-        javax.swing.border.Border compound = javax.swing.BorderFactory.createCompoundBorder(line, margin);
+        Border line = BorderFactory.createMatteBorder(0, 1, 0, 0, new Color(255, 255, 255, 80));
+        Border margin = BorderFactory.createEmptyBorder(0, 10, 0, 0);
+        Border compound = BorderFactory.createCompoundBorder(line, margin);
 
-        // Apply it to the labels that need a line on their LEFT
         lbDate.setBorder(compound);
         lbProfessor.setBorder(compound);
         lbAccessibility.setBorder(compound);
@@ -72,9 +73,11 @@ public class ItemEvent extends JPanel {
         lbStatus.setText("Status: " + data.getStatus());
         lbJoined.setText("Joined: " + data.getJoinedTime());
         lbLeft.setText("Left: " + data.getLeftTime());
-
+        
+        lbJoined.setVisible(true);
+        lbLeft.setVisible(true);
         btnJoin.setVisible(true);
-
+        
         if ("Closed".equalsIgnoreCase(data.getStatus()) || "Locked".equalsIgnoreCase(data.getStatus())) {
             btnJoin.setVisible(false);
         } else {
@@ -85,6 +88,14 @@ public class ItemEvent extends JPanel {
     
     public ButtonCustomDBoard getBtnJoin() {
         return btnJoin;
+    }
+    
+    public JLabel getLbJoined() {
+        return lbJoined;
+    }
+
+    public JLabel getLbLeft() {
+        return lbLeft;
     }
     
     @SuppressWarnings("unchecked")

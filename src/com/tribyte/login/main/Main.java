@@ -1,5 +1,6 @@
 package com.tribyte.login.main;
 
+import com.tribyte.dashboard.main.DashboardMain;
 import com.tribyte.component.PanelCover;
 import com.tribyte.component.PanelLoginAndRegister;
 import java.awt.event.ActionEvent;
@@ -9,7 +10,6 @@ import net.miginfocom.swing.MigLayout;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
-
 
 public class Main extends javax.swing.JFrame {
     
@@ -131,6 +131,8 @@ public class Main extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     public static void main(String args[]) {
+        System.setProperty("awt.useSystemAAFontSettings", "on");
+        System.setProperty("swing.aatext", "true");
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -152,6 +154,16 @@ public class Main extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> new Main().setVisible(true));
     }
 
+    public void showAdminDashboard() {
+        // This creates the dashboard window
+        DashboardMain adminDash = new DashboardMain();
+        
+        // This makes the dashboard visible
+        adminDash.setVisible(true);
+        
+        // Closes the current Login window
+        this.dispose();
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane Background;
     // End of variables declaration//GEN-END:variables
