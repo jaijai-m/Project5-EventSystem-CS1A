@@ -74,32 +74,36 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         label.setFont(new Font ("sansserif", Font.BOLD, 50));
         label.setForeground(new Color(4, 149, 22));
         login.add(label);
+        
         JLabel subLabel = new JLabel("To continue your event attendance.");
         subLabel.setFont(new Font ("sansserif", Font.PLAIN, 35));
         subLabel.setForeground(new Color(4, 149, 22));
         login.add(subLabel);
+        
         String fieldConstraints = "w 50%, h 50";
-        MyTextField txtEmail = new MyTextField();
-        txtEmail.setPrefixIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/mail.png")));
-        txtEmail.setHint("example@gordoncollege.edu.ph");
-        login.add(txtEmail, fieldConstraints);
-        MyPasswordField txtPass = new MyPasswordField();
-        txtPass.setPrefixIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/pass.png")));
-        txtPass.setHint("Password");
-        login.add(txtPass, fieldConstraints);
+        
+        txtEmailLogin = new MyTextField();
+        txtEmailLogin.setPrefixIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/mail.png")));
+        txtEmailLogin.setHint("example@gordoncollege.edu.ph");
+        login.add(txtEmailLogin, fieldConstraints);
+        
+        txtPasswordLogin = new MyPasswordField();
+        txtPasswordLogin.setPrefixIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/pass.png")));
+        txtPasswordLogin.setHint("Password");
+        login.add(txtPasswordLogin, fieldConstraints);
+        
         JButton cmdForget = new JButton("Forgot password?");
         cmdForget.setForeground(new Color(100, 100, 100));
         cmdForget.setFont(new Font("sansserif", 1, 12));
         cmdForget.setContentAreaFilled(false);
         cmdForget.setCursor(new Cursor(Cursor.HAND_CURSOR));
         login.add(cmdForget);
+        
         Button cmd = new Button();
         cmd.setBackground(new Color(4, 149, 22));
         cmd.setForeground(new Color(250, 250, 250));
         cmd.setText("LOGIN");
         login.add(cmd, "w 50%, h 50");
-//<<<<<<< Updated upstream
-//=======
 
         cmd.addActionListener(e -> {
             String email = txtEmailLogin.getText().trim();

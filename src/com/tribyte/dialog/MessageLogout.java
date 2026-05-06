@@ -11,7 +11,7 @@ import javax.swing.text.StyleConstants;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
 
-public class MessageLogout extends javax.swing.JDialog {
+public class MessageLogout extends JDialog {
 
     private final JFrame fram;
     private Animator animator;
