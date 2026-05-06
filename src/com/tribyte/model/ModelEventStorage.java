@@ -6,7 +6,7 @@ import java.util.List;
 public class ModelEventStorage {
     public static final List<ModelEvents> eventList = new ArrayList<>();
 
-    //Temporary sstorage for FormEvents
+    //Temporary storage for FormEvents
     
     static {
         // Event owned by someone else (ID 101)

@@ -93,9 +93,9 @@ public class MessageLogout extends JDialog {
 
         // Style based on Title content
         if (title.toLowerCase().contains("logout")) {
-            lbTitle.setForeground(new Color(4, 149, 22)); // Green for Title
+            lbTitle.setForeground(new Color(4, 149, 22));
             cmdConfim.setText("Yes, Logout");
-            cmdConfim.setBackground(new Color(250, 82, 82)); // Red for Button
+            cmdConfim.setBackground(new Color(250, 82, 82));
         } else if (title.toLowerCase().contains("updat")) {
             cmdConfim.setText("Update Event");
             cmdConfim.setBackground(new Color(4, 149, 22));

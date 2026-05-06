@@ -37,7 +37,7 @@ public class PanelCover extends javax.swing.JPanel {
     }
     
     private void init() {
-        logo = new JLabel(new javax.swing.ImageIcon(getClass().getResource("/com/tribyte/icon/schoolLogo.png")));
+        logo = new JLabel(new ImageIcon(getClass().getResource("/com/tribyte/icon/schoolLogo.png")));
         add(logo);
         title = new JLabel("GORDON COLLEGE");
         title.setFont(new Font("sansserif", Font.BOLD, 35));

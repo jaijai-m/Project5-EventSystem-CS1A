@@ -25,18 +25,18 @@ public class FormEditExistingEvents extends JPanel {
     }
 
     public FormEditExistingEvents(String role, int userID) {
-        this.currentUserID = userID; // Now userID comes from the Dashboard
+        this.currentUserID = userID; 
         initComponents();
         setOpaque(false);
 
         searchField = new JTextField();
-        searchField.setPreferredSize(new Dimension(250, 35)); // Slightly taller
+        searchField.setPreferredSize(new Dimension(250, 35));
         searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         searchField.setForeground(new Color(50, 50, 50));
 
         searchField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(4, 149, 22), 1, true), // Green rounded line
-                BorderFactory.createEmptyBorder(5, 10, 5, 10) // Text padding inside
+                BorderFactory.createLineBorder(new Color(4, 149, 22), 1, true),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)
         ));
 
         searchField.setToolTipText("Search by Event Name...");
@@ -59,7 +59,7 @@ public class FormEditExistingEvents extends JPanel {
 
         JPanel titlePanel = new JPanel(new MigLayout("insets 0", "[]5[]", "[]"));
         titlePanel.setOpaque(false);
-        titlePanel.add(btnBack); // Added the back button here
+        titlePanel.add(btnBack); 
         titlePanel.add(txt);
         titlePanel.add(lbImage);
         this.add(titlePanel, "wrap");
@@ -129,7 +129,6 @@ public class FormEditExistingEvents extends JPanel {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             ItemEvent item = (ItemEvent) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-            // FORCE visibility and text so it never disappears
             item.getBtnJoin().setVisible(true);
             item.getBtnJoin().setText("EDIT");
             item.getBtnJoin().setEnabled(true);
@@ -138,14 +137,12 @@ public class FormEditExistingEvents extends JPanel {
         }
     }
 
-    // 2. KEEP ONLY ONE: The Editor handles the actual click
     private class EditEditor extends EventCellEditor {
 
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
             ItemEvent item = (ItemEvent) super.getTableCellEditorComponent(table, value, isSelected, row, column);
 
-            // FORCE visibility during the click phase
             item.getBtnJoin().setVisible(true);
             item.getBtnJoin().setText("EDIT");
             item.getBtnJoin().setEnabled(true);

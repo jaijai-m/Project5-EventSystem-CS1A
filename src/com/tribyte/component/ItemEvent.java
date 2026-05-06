@@ -35,8 +35,8 @@ public class ItemEvent extends JPanel {
         lbLeft.setFont(new Font("Segoe UI", 0, 18));
         lbStatus.setFont(new Font("Segoe UI", 0, 18));
 
-        btnJoin.setBackground(new java.awt.Color(255, 255, 255, 0));
-        btnJoin.setForeground(java.awt.Color.WHITE);
+        btnJoin.setBackground(new Color(255, 255, 255, 0));
+        btnJoin.setForeground(Color.WHITE);
         btnJoin.setCursor(new Cursor(Cursor.HAND_CURSOR));
         
         Border line = BorderFactory.createMatteBorder(0, 1, 0, 0, new Color(255, 255, 255, 80));

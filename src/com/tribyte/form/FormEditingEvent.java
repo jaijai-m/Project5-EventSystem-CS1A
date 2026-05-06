@@ -6,11 +6,13 @@ import com.tribyte.model.ModelEvents;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.Insets;
 import java.awt.event.ActionListener;
 import static javax.swing.BorderFactory.createEmptyBorder;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -38,7 +40,6 @@ public class FormEditingEvent extends JPanel {
         groupStatus.add(chkOpen);
         groupStatus.add(chkLock);
 
-        // Styling
         styleCheckBox(chkYes);
         styleCheckBox(chkNo);
         styleCheckBox(chkOpen);
@@ -65,7 +66,7 @@ public class FormEditingEvent extends JPanel {
         ((AbstractDocument) jTextField5.getDocument()).setDocumentFilter(new NumericFilter());
         ((AbstractDocument) jTextField8.getDocument()).setDocumentFilter(new NumericFilter());
 
-        // LOAD DATA
+        // Loads data
         if (editingData != null) {
             loadData(editingData);
         }
@@ -103,7 +104,7 @@ public class FormEditingEvent extends JPanel {
         field.setEditable(true);
         field.setText("");
         field.setOpaque(false);
-        field.setBackground(new java.awt.Color(0, 0, 0, 0));
+        field.setBackground(new Color(0, 0, 0, 0));
 
         field.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         field.setForeground(new Color(64, 64, 64)); 
@@ -117,7 +118,7 @@ public class FormEditingEvent extends JPanel {
         chk.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         chk.setIconTextGap(15);
-        chk.setMargin(new java.awt.Insets(5, 5, 5, 5));
+        chk.setMargin(new Insets(5, 5, 5, 5));
     }
     
     private void customizeCheckboxes() {
@@ -729,7 +730,7 @@ public class FormEditingEvent extends JPanel {
     }//GEN-LAST:event_jTextField3ActionPerformed
 
     private void btnUploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUploadActionPerformed
-        try { // <--- Added this 'try'
+        try { 
             String name = jTextField1.getText();
             String date = jTextField2.getText();
             String venue = jTextField7.getText();
@@ -760,7 +761,7 @@ public class FormEditingEvent extends JPanel {
                     ModelEventStorage.eventList.set(index, updatedEvent);
 
                     // 4. Show the MODERN NOTIFICATION (Snackbar)
-                    JFrame frame = (JFrame) javax.swing.SwingUtilities.getWindowAncestor(this);
+                    JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
                     Notification notif = new Notification(frame, "Event updated successfully!");
                     notif.showNotification();
                 }
@@ -771,9 +772,9 @@ public class FormEditingEvent extends JPanel {
                 backEvent.actionPerformed(evt);
             }
 
-        } catch (NumberFormatException e) { // <--- This now has a matching 'try'
+        } catch (NumberFormatException e) {
             // Simple error handling if 'max slots' isn't a number
-            javax.swing.JOptionPane.showMessageDialog(this, "Please enter a valid number for slots.");
+            JOptionPane.showMessageDialog(this, "Please enter a valid number for slots.");
         }
     }//GEN-LAST:event_btnUploadActionPerformed
 

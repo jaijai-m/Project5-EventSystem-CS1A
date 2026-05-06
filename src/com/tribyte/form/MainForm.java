@@ -2,9 +2,10 @@ package com.tribyte.form;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-public class MainForm extends javax.swing.JPanel {
+public class MainForm extends JPanel {
 
     public MainForm() {
         initComponents();
