@@ -3,27 +3,25 @@ package com.tribyte.form;
 import com.tribyte.model.ModelEvents;
 import com.tribyte.swing.EventCellEditor;
 import com.tribyte.swing.EventCellRenderer;
-import com.tribyte.component.ItemEvent;
 import com.tribyte.model.ModelEventStorage;
 import com.tribyte.swing.ButtonCustomDBoard;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
 
     public class FormEvents extends JPanel {
 
+        private JTextField searchField;
         private ActionListener event;
         
         public void addEvent(ActionListener event) {
@@ -59,6 +57,7 @@ import net.miginfocom.swing.MigLayout;
             add(btn1, "grow, h 150!");
             add(btn2, "grow, h 150!");
             this.add(panelRound1, "span 2, grow");
+            initSearchUI();
             initTableData();
             
             btn1.addActionListener(new ActionListener() {
@@ -81,59 +80,75 @@ import net.miginfocom.swing.MigLayout;
             });
         }
         
+        private void initSearchUI() {
+            searchField = new JTextField();
+            searchField.setPreferredSize(new Dimension(250, 35));
+            searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+
+            // Modern Styling (matches your theme)
+            searchField.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(new Color(4, 149, 22), 1, true),
+                    BorderFactory.createEmptyBorder(5, 10, 5, 10)
+            ));
+            searchField.setToolTipText("Search events...");
+
+            // Live filtering listener
+            searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+                public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                    updateTable();
+                }
+
+                public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                    updateTable();
+                }
+
+                public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                    updateTable();
+                }
+            });
+
+            JPanel header = new JPanel(new BorderLayout());
+            header.setOpaque(false);
+
+            jLabel2.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 0));
+            header.add(jLabel2, BorderLayout.WEST);
+
+            JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
+            searchPanel.setOpaque(false);
+            searchPanel.add(new JLabel("Search: "));
+            searchPanel.add(searchField);
+            header.add(searchPanel, BorderLayout.EAST);
+
+            panelRound1.setLayout(new BorderLayout());
+            panelRound1.add(header, BorderLayout.NORTH);
+            panelRound1.add(jScrollPane1, BorderLayout.CENTER);
+        }
+        
         private void initTableData() {
             table1.fixTable(jScrollPane1);
-
-            table1.setModel(new DefaultTableModel(
-                    new Object[][]{},
-                    new String[]{""} 
-            ));
+            table1.setModel(new DefaultTableModel(new Object[][]{}, new String[]{""}));
 
             table1.getColumnModel().getColumn(0).setCellRenderer(new EventCellRenderer());
             table1.getColumnModel().getColumn(0).setCellEditor(new EventCellEditor());
-            
+
             table1.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-
-            ItemEvent dummyItem = new ItemEvent(); 
-            table1.addMouseMotionListener(new MouseMotionAdapter() {
-                @Override
-                public void mouseMoved(MouseEvent e) {
-                    int row = table1.rowAtPoint(e.getPoint());
-                    if (row >= 0) {
-                        Object value = table1.getValueAt(row, 0);
-                        Rectangle cellRect = table1.getCellRect(row, 0, false);
-                        int xInCell = e.getX() - cellRect.x;
-                        int yInCell = e.getY() - cellRect.y;
-
-                        dummyItem.setSize(table1.getColumnModel().getColumn(0).getWidth(), table1.getRowHeight());
-                        dummyItem.doLayout();
-
-                        Component child = dummyItem.getComponentAt(xInCell, yInCell);
-                        if (child != null && child == dummyItem.getBtnJoin()) {
-                            table1.setCursor(new Cursor(Cursor.HAND_CURSOR));
-                        } else {
-                            table1.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                        }
-                    }
-                }
-            });
-            
             table1.setRowHeight(180);
-            table1.setShowGrid(false); 
-            table1.setIntercellSpacing(new Dimension(0, 15)); 
+            table1.setShowGrid(false);
+            table1.setIntercellSpacing(new Dimension(0, 15));
 
-            panelRound1.setLayout(new BorderLayout());
-            panelRound1.add(jLabel2, BorderLayout.NORTH);
-            panelRound1.add(jScrollPane1, BorderLayout.CENTER);
+            updateTable(); 
+        }
 
-            jLabel2.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 0));
-
-            //Item for the Events
+        private void updateTable() {
             DefaultTableModel model = (DefaultTableModel) table1.getModel();
-            model.setRowCount(0); // Clear the table first
+            model.setRowCount(0);
+
+            String query = searchField.getText().toLowerCase();
 
             for (ModelEvents ev : ModelEventStorage.eventList) {
-                model.addRow(new Object[]{ev});
+                if (ev.getName().toLowerCase().contains(query) || ev.getDate().toLowerCase().contains(query)) {
+                    model.addRow(new Object[]{ev});
+                }
             }
 
             panelRound1.revalidate();

@@ -37,11 +37,9 @@ public class ItemEvent extends JPanel {
         btnJoin.setCursor(new Cursor(Cursor.HAND_CURSOR));
         
         javax.swing.border.Border line = javax.swing.BorderFactory.createMatteBorder(0, 1, 0, 0, new java.awt.Color(255, 255, 255, 80));
-        // Add some "breathing room" (padding) so the text isn't touching the line
         javax.swing.border.Border margin = javax.swing.BorderFactory.createEmptyBorder(0, 10, 0, 0);
         javax.swing.border.Border compound = javax.swing.BorderFactory.createCompoundBorder(line, margin);
 
-        // Apply it to the labels that need a line on their LEFT
         lbDate.setBorder(compound);
         lbProfessor.setBorder(compound);
         lbAccessibility.setBorder(compound);
@@ -73,6 +71,8 @@ public class ItemEvent extends JPanel {
         lbJoined.setText("Joined: " + data.getJoinedTime());
         lbLeft.setText("Left: " + data.getLeftTime());
 
+        lbJoined.setVisible(true);
+        lbLeft.setVisible(true);
         btnJoin.setVisible(true);
 
         if ("Closed".equalsIgnoreCase(data.getStatus()) || "Locked".equalsIgnoreCase(data.getStatus())) {
@@ -85,6 +85,14 @@ public class ItemEvent extends JPanel {
     
     public ButtonCustomDBoard getBtnJoin() {
         return btnJoin;
+    }
+    
+    public javax.swing.JLabel getLbJoined() {
+        return lbJoined;
+    }
+
+    public javax.swing.JLabel getLbLeft() {
+        return lbLeft;
     }
     
     @SuppressWarnings("unchecked")

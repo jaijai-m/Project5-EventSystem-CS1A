@@ -5,11 +5,14 @@ import com.tribyte.model.ModelCard;
 import com.tribyte.model.ModelEventStorage;
 import com.tribyte.model.ModelEvents;
 import com.tribyte.swing.table.EventAction;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
+import net.miginfocom.swing.MigLayout;
 
 public class FormHome extends javax.swing.JPanel {
 
@@ -29,10 +32,10 @@ public class FormHome extends javax.swing.JPanel {
         table1.fixTable(jScrollPane1);
         setOpaque(false);
 
-        setLayout(new net.miginfocom.swing.MigLayout("fillx, wrap 4, insets 10", "[fill, grow]15[fill, grow]15[fill, grow]15[fill, grow]", "[]0[]0[]20[fill, grow]"));
+        setLayout(new MigLayout("fillx, wrap 4, insets 10", "[fill, grow]15[fill, grow]15[fill, grow]15[fill, grow]", "[]0[]0[]20[fill, grow]"));
         this.removeAll();
         
-        javax.swing.JPanel titlePanel = new javax.swing.JPanel(new net.miginfocom.swing.MigLayout("insets 0", "[]5[]", "[]"));
+        JPanel titlePanel = new JPanel(new MigLayout("insets 0", "[]5[]", "[]"));
         titlePanel.setOpaque(false);
         titlePanel.add(txt);
         titlePanel.add(lbImage); 
@@ -81,7 +84,7 @@ public class FormHome extends javax.swing.JPanel {
                 if (canModify(events)) {
                     if (showConfirm("Updating Event", "Do you want to edit:\n " + events.getName() + "?", "This will open the editor.")) {
                         if (event != null) {
-                            event.actionPerformed(new java.awt.event.ActionEvent(events, java.awt.event.ActionEvent.ACTION_PERFORMED, "EDIT_EVENT"));
+                            event.actionPerformed(new ActionEvent(events, java.awt.event.ActionEvent.ACTION_PERFORMED, "EDIT_EVENT"));
                         }
                     }
                 } else {

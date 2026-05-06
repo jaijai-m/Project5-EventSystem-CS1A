@@ -4,10 +4,12 @@ import com.tribyte.component.Header;
 import com.tribyte.component.Menu;
 import com.tribyte.dialog.MessageLogout;
 import com.tribyte.event.EventMenuSelected;
+import com.tribyte.form.FormAttendance;
 import com.tribyte.form.FormEvents;
 import com.tribyte.form.FormCreateEvent;
 import com.tribyte.form.FormEditExistingEvents;
 import com.tribyte.form.FormEditingEvent;
+import com.tribyte.form.FormEventAttendees;
 import com.tribyte.form.FormHome;
 import com.tribyte.form.MainForm;
 import com.tribyte.model.ModelEvents;
@@ -74,7 +76,7 @@ public class DashboardMain extends javax.swing.JFrame {
                     });
 
                     showForm(home);
-                } // <--- Only one brace here!
+                } 
                 else if (menuIndex == 1) {
                     FormEvents fEvents = new FormEvents(userRole);
 
@@ -102,6 +104,22 @@ public class DashboardMain extends javax.swing.JFrame {
                         }
                     });
                     showForm(fEvents);
+                } else if (menuIndex == 2) { 
+                    FormAttendance attendanceSelector = new FormAttendance(userRole, userId);
+
+                    attendanceSelector.addEvent(ev -> {
+                        if ("VIEW_ATTENDANCE".equals(ev.getActionCommand())) {
+                            ModelEvents data = (ModelEvents) ev.getSource();
+                            FormEventAttendees attendeesForm = new FormEventAttendees(data);
+
+                            attendeesForm.addBackEvent(back -> selected(2));
+
+                            showForm(attendeesForm);
+
+                        }
+                    });
+
+                    showForm(attendanceSelector);
                 }
             } 
         }); 

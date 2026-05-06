@@ -13,7 +13,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
 
-public class FormEditExistingEvents extends JPanel {
+public class FormAttendance extends JPanel {
 
     private ActionListener event;
     private JTextField searchField;
@@ -24,18 +24,18 @@ public class FormEditExistingEvents extends JPanel {
         this.event = event;
     }
 
-    public FormEditExistingEvents(String role, int userID) {
-        this.currentUserID = userID; 
+    public FormAttendance(String role, int userID) {
+        this.currentUserID = userID;
         initComponents();
         setOpaque(false);
 
         searchField = new JTextField();
-        searchField.setPreferredSize(new Dimension(250, 35));
+        searchField.setPreferredSize(new Dimension(250, 35)); 
         searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         searchField.setForeground(new Color(50, 50, 50));
 
         searchField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(4, 149, 22), 1, true), 
+                BorderFactory.createLineBorder(new Color(4, 149, 22), 1, true),
                 BorderFactory.createEmptyBorder(5, 10, 5, 10) 
         ));
 
@@ -59,14 +59,14 @@ public class FormEditExistingEvents extends JPanel {
 
         JPanel titlePanel = new JPanel(new MigLayout("insets 0", "[]5[]", "[]"));
         titlePanel.setOpaque(false);
-        titlePanel.add(btnBack); 
         titlePanel.add(txt);
         titlePanel.add(lbImage);
-        this.add(titlePanel, "wrap");
+
+        this.add(titlePanel, "wrap, gapbottom -8");
+        this.add(txtSub, "wrap 20");
 
         setupTableProperties();
         updateTable();
-
         this.add(panelRound1, "grow");
 
         this.revalidate();
@@ -78,10 +78,10 @@ public class FormEditExistingEvents extends JPanel {
         table1.setModel(new DefaultTableModel(new Object[][]{}, new String[]{""}));
         table1.setTableHeader(null);
 
-        table1.getColumnModel().getColumn(0).setCellRenderer(new EditRenderer());
-        table1.getColumnModel().getColumn(0).setCellEditor(new EditEditor());
+        table1.getColumnModel().getColumn(0).setCellRenderer(new ViewRenderer());
+        table1.getColumnModel().getColumn(0).setCellEditor(new ViewEditor());
 
-        table1.setRowHeight(180);
+        table1.setRowHeight(120);
         table1.setShowGrid(false);
         table1.setIntercellSpacing(new Dimension(0, 15));
 
@@ -119,46 +119,47 @@ public class FormEditExistingEvents extends JPanel {
         }
     }
 
-    public void addBackEvent(ActionListener event) {
-        btnBack.addActionListener(event);
-    }
     
-    private class EditRenderer extends EventCellRenderer {
+    private class ViewRenderer extends EventCellRenderer {
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             ItemEvent item = (ItemEvent) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
+            item.getLbJoined().setVisible(false);
+            item.getLbLeft().setVisible(false);
+
+            item.getBtnJoin().setText("VIEW");
             item.getBtnJoin().setVisible(true);
-            item.getBtnJoin().setText("EDIT");
-            item.getBtnJoin().setEnabled(true);
 
             return item;
         }
     }
 
-    private class EditEditor extends EventCellEditor {
+    private class ViewEditor extends EventCellEditor {
 
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
             ItemEvent item = (ItemEvent) super.getTableCellEditorComponent(table, value, isSelected, row, column);
 
+            item.getLbJoined().setVisible(false);
+            item.getLbLeft().setVisible(false);
+
             item.getBtnJoin().setVisible(true);
-            item.getBtnJoin().setText("EDIT");
             item.getBtnJoin().setEnabled(true);
+            item.getBtnJoin().setText("VIEW");
 
             for (ActionListener al : item.getBtnJoin().getActionListeners()) {
                 item.getBtnJoin().removeActionListener(al);
             }
 
             item.getBtnJoin().addActionListener(e -> {
-                ModelEvents selectedEvent = (ModelEvents) value;
-                if (event != null) {
-                    event.actionPerformed(new ActionEvent(selectedEvent, ActionEvent.ACTION_PERFORMED, "EDIT_EVENT"));
-                }
+                ModelEvents data = (ModelEvents) value;
                 stopCellEditing();
+                if (event != null) {
+                    event.actionPerformed(new ActionEvent(data, ActionEvent.ACTION_PERFORMED, "VIEW_ATTENDANCE"));
+                }
             });
-
             return item;
         }
     }
@@ -173,11 +174,11 @@ public class FormEditExistingEvents extends JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         table1 = new com.tribyte.swing.table.Table();
         lbImage = new javax.swing.JLabel();
-        btnBack = new com.tribyte.swing.ButtonCustomDBoard();
+        txtSub = new javax.swing.JLabel();
 
         txt.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         txt.setForeground(new java.awt.Color(4, 149, 22));
-        txt.setText("EDIT EXISTING EVENTS");
+        txt.setText("ATTENDANCE");
 
         panelRound1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -207,7 +208,7 @@ public class FormEditExistingEvents extends JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(panelRound1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1222, Short.MAX_VALUE)
                 .addContainerGap())
         );
         panelRound1Layout.setVerticalGroup(
@@ -216,59 +217,59 @@ public class FormEditExistingEvents extends JPanel {
                 .addGap(12, 12, 12)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 491, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        lbImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/tribyte/icon/eventSmall.png"))); // NOI18N
+        lbImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/tribyte/icon/attendanceSmall.png"))); // NOI18N
 
-        btnBack.setBackground(new java.awt.Color(242, 242, 242));
-        btnBack.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/tribyte/icon/back.png"))); // NOI18N
-        btnBack.addActionListener(this::btnBackActionPerformed);
+        txtSub.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        txtSub.setForeground(new java.awt.Color(4, 149, 22));
+        txtSub.setText("Events Overview");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addComponent(btnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txt)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbImage)
-                .addContainerGap(843, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(panelRound1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(6, 6, 6))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txt)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lbImage))
+                            .addComponent(txtSub))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(panelRound1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(6, 6, 6))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnBack, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lbImage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lbImage, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(txt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(1, 1, 1)
+                .addComponent(txtSub)
                 .addGap(18, 18, 18)
                 .addComponent(panelRound1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnBackActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.tribyte.swing.ButtonCustomDBoard btnBack;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lbImage;
     private com.tribyte.swing.PanelRound panelRound1;
     private com.tribyte.swing.table.Table table1;
     private javax.swing.JLabel txt;
+    private javax.swing.JLabel txtSub;
     // End of variables declaration//GEN-END:variables
 }

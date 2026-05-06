@@ -13,7 +13,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -38,7 +37,6 @@ public class FormEditingEvent extends JPanel {
         groupStatus.add(chkOpen);
         groupStatus.add(chkLock);
 
-        // Styling
         styleCheckBox(chkYes);
         styleCheckBox(chkNo);
         styleCheckBox(chkOpen);
@@ -65,7 +63,7 @@ public class FormEditingEvent extends JPanel {
         ((AbstractDocument) jTextField5.getDocument()).setDocumentFilter(new NumericFilter());
         ((AbstractDocument) jTextField8.getDocument()).setDocumentFilter(new NumericFilter());
 
-        // LOAD DATA
+        // Loads data
         if (editingData != null) {
             loadData(editingData);
         }
@@ -729,20 +727,18 @@ public class FormEditingEvent extends JPanel {
     }//GEN-LAST:event_jTextField3ActionPerformed
 
     private void btnUploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUploadActionPerformed
-        try { // <--- Added this 'try'
+        try {
             String name = jTextField1.getText();
             String date = jTextField2.getText();
             String venue = jTextField7.getText();
             String eventCode = jTextField3.getText();
             String organizerName = jTextField6.getText();
 
-            // Handle potential number format errors for Max Slots
             int max = Integer.parseInt(jTextField8.getText());
             String accessibility = chkYes.isSelected() ? "Private" : "Public";
             String status = chkOpen.isSelected() ? "Open" : "Closed";
 
             if (editingData != null) {
-                // 2. Create the updated object keeping original IDs and slots
                 ModelEvents updatedEvent = new ModelEvents(
                         editingData.getEventID(),
                         editingData.getOwnerID(),
@@ -754,25 +750,21 @@ public class FormEditingEvent extends JPanel {
                         organizerName, accessibility, eventCode
                 );
 
-                // 3. Find the index and swap the data in the Storage
                 int index = ModelEventStorage.eventList.indexOf(editingData);
                 if (index != -1) {
                     ModelEventStorage.eventList.set(index, updatedEvent);
 
-                    // 4. Show the MODERN NOTIFICATION (Snackbar)
                     JFrame frame = (JFrame) javax.swing.SwingUtilities.getWindowAncestor(this);
                     Notification notif = new Notification(frame, "Event updated successfully!");
                     notif.showNotification();
                 }
             }
 
-            // 5. Go back to the list view immediately
             if (backEvent != null) {
                 backEvent.actionPerformed(evt);
             }
 
-        } catch (NumberFormatException e) { // <--- This now has a matching 'try'
-            // Simple error handling if 'max slots' isn't a number
+        } catch (NumberFormatException e) { 
             javax.swing.JOptionPane.showMessageDialog(this, "Please enter a valid number for slots.");
         }
     }//GEN-LAST:event_btnUploadActionPerformed
