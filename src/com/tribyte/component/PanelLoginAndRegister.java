@@ -94,6 +94,53 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         cmd.setForeground(new Color(250, 250, 250));
         cmd.setText("LOGIN");
         login.add(cmd, "w 50%, h 50");
+<<<<<<< Updated upstream
+=======
+
+        cmd.addActionListener(e -> {
+            String email = txtEmailLogin.getText().trim();
+            String password = String.valueOf(txtPasswordLogin.getPassword());
+
+            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+            //Message ms = new Message(frame);
+            
+            if (email.isEmpty() || password.isEmpty()) {
+                //ms.showMessage(Message.MessageType.CANCEL, "Sign In Error", "Fields cannot be empty.", "Enter both email and password!");
+                System.out.println("Error: Fields are empty");
+                return;
+            }
+                
+            try (java.sql.Connection conn = DatabaseConnection.getConnection()) {
+                String hashedInput = PasswordSecurity.hashSHA256(password);    
+                    
+                String sql = "SELECT * FROM users WHERE email= ? AND password= ?";
+                java.sql.PreparedStatement p = conn.prepareStatement(sql);
+                p.setString(1, email);    
+                p.setString(2, hashedInput);        
+                    
+                java.sql.ResultSet rs = p.executeQuery();    
+
+                if (rs.next()) {
+                    String role = rs.getString("role");
+                    
+                    if (role.equalsIgnoreCase("Admin")) {
+                        // Transition to Admin Dashboard
+                        com.tribyte.login.main.Main main = (com.tribyte.login.main.Main) frame;
+                        main.showAdminDashboard();
+                    } else {
+                        System.out.println("Login Success! Role: " + role);
+                    // TODO Transition to Staff/Registrant Dashboards here
+                    } 
+                } else {
+                    //ms.showMessage(Message.MessageType.CANCEL, "Access Denied", "Invalid Email or Password!", "Please try again.");
+                    System.out.println("Access Denied: Invalid Email or Password");
+                }
+            } catch (java.sql.SQLException ex) {
+                //ms.showMessage(Message.MessageType.CANCEL, "Database Connection Failed", "Unable to Sign In right now!", ex.getMessage());
+                ex.printStackTrace();
+            }
+        });
+>>>>>>> Stashed changes
     }
     
     public void showRegister(boolean show) {
