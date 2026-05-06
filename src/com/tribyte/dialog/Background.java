@@ -59,7 +59,7 @@ public class Background extends JPanel{
         int iconSize = y * 2;
         int iconX = (width - (iconSize + iconSpace * 2)) / 2;
 
-        Area area = new Area(new java.awt.geom.RoundRectangle2D.Double(x, y, width, height - y, round, round));
+        Area area = new Area(new RoundRectangle2D.Double(x, y, width, height - y, round, round));
         area.subtract(new Area(new Ellipse2D.Double(iconX, -iconSpace, iconSize + iconSpace * 2, iconSize + iconSpace * 2)));
         area.add(new Area(new Ellipse2D.Double(iconX + iconSpace, 0, iconSize, iconSize)));
 

@@ -16,6 +16,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
 
@@ -85,24 +87,22 @@ import net.miginfocom.swing.MigLayout;
             searchField.setPreferredSize(new Dimension(250, 35));
             searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
-            // Modern Styling (matches your theme)
             searchField.setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createLineBorder(new Color(4, 149, 22), 1, true),
                     BorderFactory.createEmptyBorder(5, 10, 5, 10)
             ));
             searchField.setToolTipText("Search events...");
 
-            // Live filtering listener
-            searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-                public void insertUpdate(javax.swing.event.DocumentEvent e) {
+            searchField.getDocument().addDocumentListener(new DocumentListener() {
+                public void insertUpdate(DocumentEvent e) {
                     updateTable();
                 }
 
-                public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                public void removeUpdate(DocumentEvent e) {
                     updateTable();
                 }
 
-                public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                public void changedUpdate(DocumentEvent e) {
                     updateTable();
                 }
             });

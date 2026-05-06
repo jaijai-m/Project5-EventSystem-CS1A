@@ -11,7 +11,7 @@ import javax.swing.text.StyleConstants;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
 
-public class MessageLogout extends javax.swing.JDialog {
+public class MessageLogout extends JDialog {
 
     private final JFrame fram;
     private Animator animator;
@@ -33,7 +33,6 @@ public class MessageLogout extends javax.swing.JDialog {
     private void init() {
         setBackground(new Color(0, 0, 0, 0));
 
-        // Center the text in the main JTextPane
         SimpleAttributeSet center = new SimpleAttributeSet();
         StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
         txt.setStyledDocument(txt.getStyledDocument());
@@ -91,11 +90,10 @@ public class MessageLogout extends javax.swing.JDialog {
         lbTitle.setText(title);
         txt.setText(message);
 
-        // Style based on Title content
         if (title.toLowerCase().contains("logout")) {
-            lbTitle.setForeground(new Color(4, 149, 22)); // Green for Title
+            lbTitle.setForeground(new Color(4, 149, 22)); 
             cmdConfim.setText("Yes, Logout");
-            cmdConfim.setBackground(new Color(250, 82, 82)); // Red for Button
+            cmdConfim.setBackground(new Color(250, 82, 82)); 
         } else if (title.toLowerCase().contains("updat")) {
             cmdConfim.setText("Update Event");
             cmdConfim.setBackground(new Color(4, 149, 22));

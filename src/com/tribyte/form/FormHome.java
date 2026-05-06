@@ -14,11 +14,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
 
-public class FormHome extends javax.swing.JPanel {
+public class FormHome extends JPanel {
 
     private String role;
     private int currentUserId; // To track which events the Admin owns
-    private ActionListener event; // Add this
+    private ActionListener event; 
 
     public void addEvent(ActionListener event) {
         this.event = event;

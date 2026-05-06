@@ -2,16 +2,18 @@ package com.tribyte.dialog;
 
 import com.tribyte.swing.Glass;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JTextField;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
 
-public class MessageEventCode extends javax.swing.JDialog {
+public class MessageEventCode extends JDialog {
 
     private final JFrame fram;
     private Animator animator;
@@ -31,12 +33,10 @@ public class MessageEventCode extends javax.swing.JDialog {
         
         cmdCancel.setVisible(false);
 
-        // Text Centering Logic
         SimpleAttributeSet center = new SimpleAttributeSet();
         StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
-        txtCodeInput.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtCodeInput.setHorizontalAlignment(JTextField.CENTER);
 
-        // For txt
         txt.setStyledDocument(txt.getStyledDocument());
         txt.getStyledDocument().setParagraphAttributes(0, txt.getStyledDocument().getLength(), center, false);
         txt.setOpaque(false);
@@ -97,7 +97,7 @@ public class MessageEventCode extends javax.swing.JDialog {
 
         lbTitle.setText("This event requires a code!");
         lbTitle.setForeground(Color.WHITE);
-        lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 18));
+        lbTitle.setFont(new Font("Segoe UI", 1, 18));
 
         txt.setText("(To find code, look for a Student Organization member.)");
         txt.setForeground(Color.WHITE);

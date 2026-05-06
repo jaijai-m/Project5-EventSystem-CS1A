@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import net.miginfocom.swing.MigLayout;
 
@@ -36,7 +37,7 @@ public class PanelCover extends javax.swing.JPanel {
     }
     
     private void init() {
-        logo = new JLabel(new javax.swing.ImageIcon(getClass().getResource("/com/tribyte/icon/schoolLogo.png")));
+        logo = new JLabel(new ImageIcon(getClass().getResource("/com/tribyte/icon/schoolLogo.png")));
         add(logo);
         title = new JLabel("GORDON COLLEGE");
         title.setFont(new Font("sansserif", Font.BOLD, 35));

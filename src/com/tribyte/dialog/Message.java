@@ -4,6 +4,7 @@ import com.tribyte.swing.Glass;
 import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.text.SimpleAttributeSet;
@@ -11,7 +12,7 @@ import javax.swing.text.StyleConstants;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
 
-public class Message extends javax.swing.JDialog {
+public class Message extends JDialog {
 
     private final JFrame fram;
     private Animator animator;
@@ -29,17 +30,14 @@ public class Message extends javax.swing.JDialog {
     private void init() {
         setBackground(new Color(0, 0, 0, 0));
 
-        // Text Centering Logic
         SimpleAttributeSet center = new SimpleAttributeSet();
         StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
 
-        // For txt
         txt.setStyledDocument(txt.getStyledDocument());
         txt.getStyledDocument().setParagraphAttributes(0, txt.getStyledDocument().getLength(), center, false);
         txt.setOpaque(false);
         txt.setBackground(new Color(0, 0, 0, 0));
 
-        // For txtSub
         txtsub.getStyledDocument().setParagraphAttributes(0, txtsub.getStyledDocument().getLength(), center, false);
         txtsub.setOpaque(false);
         txtsub.setBackground(new Color(0, 0, 0, 0));
@@ -95,14 +93,14 @@ public class Message extends javax.swing.JDialog {
         pack();
         if (title.toLowerCase().contains("updat")) {
             cmdConfim.setText("Update Event");
-            cmdConfim.setBackground(new Color(4, 149, 22)); // Green for Update
+            cmdConfim.setBackground(new Color(4, 149, 22)); 
             lbTitle.setForeground(new Color(4, 149, 22));
-            lbIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/tribyte/icon/sync.png")));
+            lbIcon.setIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/sync.png")));
         } else {
             cmdConfim.setText("Yes, Delete Event");
             cmdConfim.setBackground(new Color(250, 82, 82)); 
             lbTitle.setForeground(new Color(250, 82, 82));
-            lbIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/tribyte/icon/caution.png")));
+            lbIcon.setIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/caution.png")));
         }
         setLocationRelativeTo(fram);
         startAnimator(true);

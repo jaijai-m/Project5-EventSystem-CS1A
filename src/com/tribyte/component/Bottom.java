@@ -5,8 +5,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import javax.swing.JPanel;
 
-public class Bottom extends javax.swing.JPanel {
+public class Bottom extends JPanel {
 
     public void setAlpha(float alpha) {
         this.alpha = alpha;

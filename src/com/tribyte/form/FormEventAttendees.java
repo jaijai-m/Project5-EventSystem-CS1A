@@ -8,7 +8,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
 
-public class FormEventAttendees extends javax.swing.JPanel {
+public class FormEventAttendees extends JPanel {
 
     private ModelEvents selectedEvent;
     private ActionListener backEvent;

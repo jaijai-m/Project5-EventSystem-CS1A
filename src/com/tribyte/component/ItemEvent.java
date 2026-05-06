@@ -9,7 +9,10 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 
 public class ItemEvent extends JPanel {
 
@@ -32,13 +35,13 @@ public class ItemEvent extends JPanel {
         lbLeft.setFont(new Font("Segoe UI", 0, 18));
         lbStatus.setFont(new Font("Segoe UI", 0, 18));
 
-        btnJoin.setBackground(new java.awt.Color(255, 255, 255, 0));
-        btnJoin.setForeground(java.awt.Color.WHITE);
+        btnJoin.setBackground(new Color(255, 255, 255, 0));
+        btnJoin.setForeground(Color.WHITE);
         btnJoin.setCursor(new Cursor(Cursor.HAND_CURSOR));
         
-        javax.swing.border.Border line = javax.swing.BorderFactory.createMatteBorder(0, 1, 0, 0, new java.awt.Color(255, 255, 255, 80));
-        javax.swing.border.Border margin = javax.swing.BorderFactory.createEmptyBorder(0, 10, 0, 0);
-        javax.swing.border.Border compound = javax.swing.BorderFactory.createCompoundBorder(line, margin);
+        Border line = BorderFactory.createMatteBorder(0, 1, 0, 0, new Color(255, 255, 255, 80));
+        Border margin = BorderFactory.createEmptyBorder(0, 10, 0, 0);
+        Border compound = BorderFactory.createCompoundBorder(line, margin);
 
         lbDate.setBorder(compound);
         lbProfessor.setBorder(compound);
@@ -87,11 +90,11 @@ public class ItemEvent extends JPanel {
         return btnJoin;
     }
     
-    public javax.swing.JLabel getLbJoined() {
+    public JLabel getLbJoined() {
         return lbJoined;
     }
 
-    public javax.swing.JLabel getLbLeft() {
+    public JLabel getLbLeft() {
         return lbLeft;
     }
     

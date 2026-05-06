@@ -5,6 +5,7 @@ import com.tribyte.model.ModelEvents;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.Insets;
 import java.awt.event.ActionListener;
 import static javax.swing.BorderFactory.createEmptyBorder;
 import javax.swing.ButtonGroup;
@@ -86,7 +87,7 @@ public class FormCreateEvent extends JPanel {
         field.setEditable(true);
         field.setText("");
         field.setOpaque(false);
-        field.setBackground(new java.awt.Color(0, 0, 0, 0));
+        field.setBackground(new Color(0, 0, 0, 0));
 
         field.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         field.setForeground(new Color(64, 64, 64)); 
@@ -100,7 +101,7 @@ public class FormCreateEvent extends JPanel {
         chk.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         chk.setIconTextGap(15);
-        chk.setMargin(new java.awt.Insets(5, 5, 5, 5));
+        chk.setMargin(new Insets(5, 5, 5, 5));
     }
     
     private void customizeCheckboxes() {
