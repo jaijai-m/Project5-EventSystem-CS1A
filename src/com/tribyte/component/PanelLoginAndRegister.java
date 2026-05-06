@@ -94,8 +94,8 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         cmd.setForeground(new Color(250, 250, 250));
         cmd.setText("LOGIN");
         login.add(cmd, "w 50%, h 50");
-<<<<<<< Updated upstream
-=======
+//<<<<<<< Updated upstream
+//=======
 
         cmd.addActionListener(e -> {
             String email = txtEmailLogin.getText().trim();
@@ -140,7 +140,7 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
                 ex.printStackTrace();
             }
         });
->>>>>>> Stashed changes
+//>>>>>>> Stashed changes
     }
     
     public void showRegister(boolean show) {
