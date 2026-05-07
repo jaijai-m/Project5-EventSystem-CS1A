@@ -4,6 +4,7 @@ import com.tribyte.swing.Button;
 import com.tribyte.swing.MyPasswordField;
 import com.tribyte.swing.MyTextField;
 import com.tribyte.utilities.PasswordSecurity;
+import com.tribyte.utilities.UserSession;
 import database.connection.DatabaseConnection;
 import java.awt.Font;
 import java.awt.Color;
@@ -129,7 +130,13 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
                 java.sql.ResultSet rs = p.executeQuery();    
 
                 if (rs.next()) {
+                    // Getting user data from database 
+                    int userId = rs.getInt("user_id");
+                    String firstName = rs.getString("first_name");
                     String role = rs.getString("role");
+                    
+                    // Data is stored in UserSession
+                    UserSession.getInstance().setUser(userId, firstName);
                     
                     if (role.equalsIgnoreCase("Admin")) {
                         // Transition to Admin Dashboard
@@ -137,7 +144,7 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
                         main.showAdminDashboard();
                     } else {
                         System.out.println("Login Success! Role: " + role);
-                    // TODO Transition to Staff/Registrant Dashboards here
+                        // TODO Transition to Staff/Registrant Dashboards here
                     } 
                 } else {
                     //ms.showMessage(Message.MessageType.CANCEL, "Access Denied", "Invalid Email or Password!", "Please try again.");
@@ -148,7 +155,6 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
                 ex.printStackTrace();
             }
         });
-//>>>>>>> Stashed changes
     }
     
     public void showRegister(boolean show) {

@@ -68,7 +68,7 @@ public class MessageLogout extends JDialog {
         animator.setResolution(5);
         animator.setAcceleration(.5f);
         animator.setDeceleration(.5f);
-        setOpacity(0f);
+        //setOpacity(0f);
         glass = new Glass();
     }
 
