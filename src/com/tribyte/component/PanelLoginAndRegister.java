@@ -13,6 +13,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import net.miginfocom.swing.MigLayout;
 
@@ -111,11 +112,10 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
             String password = String.valueOf(txtPasswordLogin.getPassword());
 
             JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-            //Message ms = new Message(frame);
             
             if (email.isEmpty() || password.isEmpty()) {
-                //ms.showMessage(Message.MessageType.CANCEL, "Sign In Error", "Fields cannot be empty.", "Enter both email and password!");
-                System.out.println("Error: Fields are empty");
+                JOptionPane.showMessageDialog(this,"Fields cannot be empty.", "Enter both email and password!", JOptionPane.WARNING_MESSAGE);
+                //System.out.println("Error: Fields are empty");
                 return;
             }
                 

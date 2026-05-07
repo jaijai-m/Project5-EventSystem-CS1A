@@ -2,6 +2,7 @@ package com.tribyte.form;
 
 import com.tribyte.model.ModelEventStorage;
 import com.tribyte.model.ModelEvents;
+import com.tribyte.utilities.UserSession;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -713,35 +714,72 @@ public class FormCreateEvent extends JPanel {
     }//GEN-LAST:event_jTextField3ActionPerformed
 
     private void btnUploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUploadActionPerformed
-        String name = jTextField1.getText();
-        String date = jTextField2.getText();
-        String venue = jTextField7.getText();
-        String eventCode = jTextField3.getText();
+    
+    // Capture data from text fields
+    String name = jTextField1.getText().trim();
+    String date = jTextField2.getText().trim();
+    String venue = jTextField7.getText().trim();
+    String eventCode = jTextField3.getText().trim();
+    String organizerName = jTextField6.getText().trim();
+    String maxStr = jTextField8.getText().trim();
 
-        String organizerName = jTextField6.getText();
+    //  Validation: Check if required fields are empty
+    if (name.isEmpty() || date.isEmpty() || venue.isEmpty() || maxStr.isEmpty()) {
+        System.out.println("Please fill in the required fields.");
+        // TODO show a MessageDialog here
+        return;
+    }
 
-        String idText = jTextField5.getText();
+    try {
+        int maxSlots = Integer.parseInt(maxStr);
         
-        int max = Integer.parseInt(jTextField8.getText());
-        int eventID;
-        try {
-            eventID = Integer.parseInt(idText);
-        } catch (Exception e) {
-            eventID = ModelEventStorage.eventList.size() + 1;
+        // Automatically pull ID from UserSession
+        int adminId = UserSession.getInstance().getUserId();
+
+        // SQL Query
+        // event_id and created_at are handled automatically by the database
+        String query = "INSERT INTO events (event_name, event_date, venue, max_slots, event_code, created_by) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (java.sql.Connection conn = database.connection.DatabaseConnection.getConnection(); 
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, name);
+            pstmt.setString(2, date); 
+            pstmt.setString(3, venue);
+            pstmt.setInt(4, maxSlots);
+            
+            // Standard check for optional event code
+            if (eventCode.isEmpty()) {
+                pstmt.setNull(5, java.sql.Types.VARCHAR);
+            } else {
+                pstmt.setString(5, eventCode);
+            }
+            
+            pstmt.setInt(6, adminId);
+
+            // Execute Update and update Local Storage
+            if (pstmt.executeUpdate() > 0) {
+                // If you still use the local list for UI updates, add it here
+                String accessibility = chkYes.isSelected() ? "Private" : "Public";
+                String status = chkOpen.isSelected() ? "Open" : "Closed";
+                
+                ModelEvents newEvent = new ModelEvents(
+                    0, adminId, name, date, venue, 0, maxSlots, status, "---", "---", organizerName, accessibility, eventCode
+                );
+                ModelEventStorage.eventList.add(newEvent);
+
+                // Navigate back
+                if (backEvent != null) { 
+                    backEvent.actionPerformed(evt);
+                }
+            }
         }
+    } catch (NumberFormatException e) {
+        System.out.println("Error: Max slots must be a number.");
+    } catch (java.sql.SQLException e) {
+        e.printStackTrace();
+    }
 
-        String accessibility = chkYes.isSelected() ? "Private" : "Public";
-        String status = chkOpen.isSelected() ? "Open" : "Closed";
-
-        ModelEvents newEvent = new ModelEvents(
-                eventID, 101, name, date, venue, 0, max, status, "---", "---", organizerName, accessibility, eventCode
-        );
-
-        ModelEventStorage.eventList.add(newEvent);
-
-        if (backEvent != null) {
-            backEvent.actionPerformed(evt);
-        }
     }//GEN-LAST:event_btnUploadActionPerformed
 
     private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField5ActionPerformed
