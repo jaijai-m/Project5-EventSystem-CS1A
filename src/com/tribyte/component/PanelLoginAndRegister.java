@@ -39,35 +39,85 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         subLabel.setForeground(new Color(4, 149, 22));
         register.add(subLabel);
         String fieldConstraints = "w 50%, h 50";
-        MyTextField txtFName = new MyTextField();
+        txtFName = new MyTextField();
         txtFName.setPrefixIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/user.png")));
         txtFName.setHint("First Name");
         register.add(txtFName, fieldConstraints);
-        MyTextField txtLName = new MyTextField();
+        
+        txtLName = new MyTextField();
         txtLName.setPrefixIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/user.png")));
         txtLName.setHint("Last Name");
         register.add(txtLName, fieldConstraints);
-        MyTextField txtCoInfo = new MyTextField();
-        txtCoInfo.setPrefixIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/contact.png")));
-        txtCoInfo.setHint("Contact Number");
-        register.add(txtCoInfo, fieldConstraints);
-        MyTextField txtEmail = new MyTextField();
+        
+        txtContactNumber = new MyTextField();
+        txtContactNumber.setPrefixIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/contact.png")));
+        txtContactNumber.setHint("Contact Number");
+        register.add(txtContactNumber, fieldConstraints);
+        
+        txtEmail = new MyTextField();
         txtEmail.setPrefixIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/mail.png")));
         txtEmail.setHint("example@gordoncollege.edu.ph");
         register.add(txtEmail, fieldConstraints);
-        MyPasswordField txtPass = new MyPasswordField();
-        txtPass.setPrefixIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/pass.png")));
-        txtPass.setHint("Password");
-        register.add(txtPass, fieldConstraints);
-        MyPasswordField txtConPass = new MyPasswordField();
-        txtConPass.setPrefixIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/pass.png")));
-        txtConPass.setHint("Confirm Password");
-        register.add(txtConPass, fieldConstraints);
+        
+        txtPassword = new MyPasswordField();
+        txtPassword.setPrefixIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/pass.png")));
+        txtPassword.setHint("Password");
+        register.add(txtPassword, fieldConstraints);
+        
+        txtConPassword = new MyPasswordField();
+        txtConPassword.setPrefixIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/pass.png")));
+        txtConPassword.setHint("Confirm Password");
+        register.add(txtConPassword, fieldConstraints);
+        
         Button cmd = new Button();
         cmd.setBackground(new Color(4, 149, 22));
         cmd.setForeground(new Color(250, 250, 250));
         cmd.setText("REGISTER");
         register.add(cmd, "w 50%, h 50");
+        
+        cmd.addActionListener(e -> {
+            String fName = txtFName.getText().trim();
+            String lName = txtLName.getText().trim();
+            String email = txtEmail.getText().trim();
+            String contact = txtContactNumber.getText().trim();
+            String password = String.valueOf(txtPassword.getPassword());
+            String confirmPassword = String.valueOf(txtConPassword.getPassword());
+
+            //JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+            //Message ms = new Message(frame);
+            
+            if (fName.isEmpty() || lName.isEmpty() || email.isEmpty() || contact.isEmpty() || password.isEmpty()) {
+                //"Missing Info", "All fields are required.", "Please fill out the form completely."
+                return;
+            }
+            if (!password.equals(confirmPassword)) {
+                //"Match Error", "Passwords do not match.", "Please double-check your password."
+                return;
+            }
+
+            try (java.sql.Connection conn = DatabaseConnection.getConnection()) {
+                // Using the PasswordSecurity Class to hash the password
+                String hashedPassword = PasswordSecurity.hashSHA256(password); 
+
+                // SQL with Hardcoded Registrant role
+                String sql = "INSERT INTO users (first_name, last_name, email, contact_number, password, role) VALUES (?, ?, ?, ?, ?, 'registrant')";
+                java.sql.PreparedStatement p = conn.prepareStatement(sql);
+
+                p.setString(1, fName);
+                p.setString(2, lName);
+                p.setString(3, email);
+                p.setString(4, contact);
+                p.setString(5, hashedPassword);
+
+                p.executeUpdate();
+                
+                //"Success!", "Account is Created", "You can now login!"
+                
+                showRegister(false); 
+            } catch (java.sql.SQLException ex) {
+                //"Database Connection Failed", "Unable to Sign Up", ex.getMessage());
+            }
+        });
     }
     
     private void initLogin() {
@@ -212,6 +262,13 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
     private javax.swing.JPanel login;
     private javax.swing.JPanel register;
 
+    private MyTextField txtFName;
+    private MyTextField txtLName;
+    private MyTextField txtContactNumber;
+    private MyTextField txtEmail;
+    private MyPasswordField txtPassword;
+    private MyPasswordField txtConPassword;
+    
     private MyTextField txtEmailLogin;
     private MyPasswordField txtPasswordLogin;
     // End of variables declaration//GEN-END:variables
