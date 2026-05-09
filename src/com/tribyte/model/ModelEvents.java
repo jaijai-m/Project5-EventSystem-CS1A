@@ -32,7 +32,6 @@ public class ModelEvents {
         this.leftTime = leftTime;
         this.professor = professor;
         this.accessibility = accessibility;
-        this.eventID = eventID;
         this.eventCode = eventCode;
     }
 

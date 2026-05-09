@@ -1,5 +1,6 @@
 package com.tribyte.component;
 
+import com.tribyte.model.ModelEventStorage;
 import com.tribyte.swing.Button;
 import com.tribyte.swing.MyPasswordField;
 import com.tribyte.swing.MyTextField;
@@ -201,6 +202,9 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
                     
                     // Data is stored in UserSession
                     UserSession.getInstance().setUser(userId, fullName);
+                    
+                    // Get the data from the database to show up on the screen
+                    ModelEventStorage.loadEventsFromDatabase();
                     
                     if (role.equalsIgnoreCase("Admin")) {
                         //JOptionPane.showMessageDialog(this, "Login Successful! Welcome, " + firstName);
