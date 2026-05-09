@@ -87,10 +87,12 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
             //Message ms = new Message(frame);
             
             if (fName.isEmpty() || lName.isEmpty() || email.isEmpty() || contact.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "All fields are required. Please fill out the form completely.", "Missing Info", JOptionPane.WARNING_MESSAGE);
                 //"Missing Info", "All fields are required.", "Please fill out the form completely."
                 return;
             }
             if (!password.equals(confirmPassword)) {
+                JOptionPane.showMessageDialog(this, "Passwords do not match. Please double-check your password!", "Match Error", JOptionPane.WARNING_MESSAGE);
                 //"Match Error", "Passwords do not match.", "Please double-check your password."
                 return;
             }
@@ -111,10 +113,11 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
 
                 p.executeUpdate();
                 
-                //"Success!", "Account is Created", "You can now login!"
+                JOptionPane.showMessageDialog(this, "Success! Account is Created. You can now log in!", "Account Created Successfully!", JOptionPane.INFORMATION_MESSAGE);
                 
                 showRegister(false); 
             } catch (java.sql.SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Database Connection Failed: " + ex.getMessage(), "Unable to Sign Up right now!", JOptionPane.ERROR_MESSAGE);
                 //"Database Connection Failed", "Unable to Sign Up", ex.getMessage());
             }
         });
@@ -189,20 +192,27 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
                     UserSession.getInstance().setUser(userId, firstName);
                     
                     if (role.equalsIgnoreCase("Admin")) {
+                        //JOptionPane.showMessageDialog(this, "Login Successful! Welcome, " + firstName);
                         // Transition to Admin Dashboard
                         com.tribyte.login.main.Main main = (com.tribyte.login.main.Main) frame;
                         main.showAdminDashboard();
-                    } else {
-                        System.out.println("Login Success! Role: " + role);
+                        JOptionPane.showMessageDialog(this, "Login Successful! Welcome, " + firstName);
+                    } else if (role.equalsIgnoreCase("Staff")) {
+                        JOptionPane.showMessageDialog(this, "Login Successful! Welcome, " + firstName);
+                        //System.out.println("Login Success! Role: " + role);
                         // TODO Transition to Staff/Registrant Dashboards here
-                    } 
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Login Successful! Welcome,  " + firstName);
+                    }
                 } else {
+                    JOptionPane.showMessageDialog(this, "Invalid Email or Password!", "Access Denied", JOptionPane.ERROR_MESSAGE);
                     //ms.showMessage(Message.MessageType.CANCEL, "Access Denied", "Invalid Email or Password!", "Please try again.");
-                    System.out.println("Access Denied: Invalid Email or Password");
+                    //System.out.println("Access Denied: Invalid Email or Password");
                 }
             } catch (java.sql.SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Database Connection Failed: " + ex.getMessage(), "Unable to Sign In right now!", JOptionPane.ERROR_MESSAGE);
                 //ms.showMessage(Message.MessageType.CANCEL, "Database Connection Failed", "Unable to Sign In right now!", ex.getMessage());
-                ex.printStackTrace();
+                //ex.printStackTrace();
             }
         });
     }
