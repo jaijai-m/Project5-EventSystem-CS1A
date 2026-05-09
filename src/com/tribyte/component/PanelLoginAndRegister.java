@@ -185,24 +185,35 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
                 if (rs.next()) {
                     // Getting user data from database 
                     int userId = rs.getInt("user_id");
-                    String firstName = rs.getString("first_name");
+                    
+                    String first = rs.getString("first_name");
+                    String middle = rs.getString("middle_name");
+                    String last = rs.getString("last_name");
+                    
+                    String fullName;
+                    if (middle != null && !middle.trim().isEmpty()) {
+                        fullName = first + " " + middle + " " + last;
+                    } else {
+                        fullName = first + " " + last;
+                    }
+                    
                     String role = rs.getString("role");
                     
                     // Data is stored in UserSession
-                    UserSession.getInstance().setUser(userId, firstName);
+                    UserSession.getInstance().setUser(userId, fullName);
                     
                     if (role.equalsIgnoreCase("Admin")) {
                         //JOptionPane.showMessageDialog(this, "Login Successful! Welcome, " + firstName);
                         // Transition to Admin Dashboard
                         com.tribyte.login.main.Main main = (com.tribyte.login.main.Main) frame;
                         main.showAdminDashboard();
-                        JOptionPane.showMessageDialog(this, "Login Successful! Welcome, " + firstName);
+                        JOptionPane.showMessageDialog(this, "Login Successful! Welcome, " + fullName);
                     } else if (role.equalsIgnoreCase("Staff")) {
-                        JOptionPane.showMessageDialog(this, "Login Successful! Welcome, " + firstName);
+                        JOptionPane.showMessageDialog(this, "Login Successful! Welcome, " + fullName);
                         //System.out.println("Login Success! Role: " + role);
                         // TODO Transition to Staff/Registrant Dashboards here
                     } else {
-                        JOptionPane.showMessageDialog(this, "Login Successful! Welcome,  " + firstName);
+                        JOptionPane.showMessageDialog(this, "Login Successful! Welcome,  " + fullName);
                     }
                 } else {
                     JOptionPane.showMessageDialog(this, "Invalid Email or Password!", "Access Denied", JOptionPane.ERROR_MESSAGE);
@@ -210,7 +221,7 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
                     //System.out.println("Access Denied: Invalid Email or Password");
                 }
             } catch (java.sql.SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Database Connection Failed: " + ex.getMessage(), "Unable to Sign In right now!", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Database Error: " + ex.getMessage(), "Unable to Sign In right now!", JOptionPane.ERROR_MESSAGE);
                 //ms.showMessage(Message.MessageType.CANCEL, "Database Connection Failed", "Unable to Sign In right now!", ex.getMessage());
                 //ex.printStackTrace();
             }

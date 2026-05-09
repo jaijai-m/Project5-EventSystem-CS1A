@@ -3,6 +3,8 @@ package com.tribyte.form;
 import com.tribyte.dialog.Notification;
 import com.tribyte.model.ModelEventStorage;
 import com.tribyte.model.ModelEvents;
+//import com.tribyte.utilities.UserSession;
+import database.connection.DatabaseConnection;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -736,45 +738,74 @@ public class FormEditingEvent extends JPanel {
             String venue = jTextField7.getText();
             String eventCode = jTextField3.getText();
             String organizerName = jTextField6.getText();
+            String maxStr = jTextField8.getText().trim();
 
+            // Validation
+            if (name.isEmpty() || date.isEmpty() || venue.isEmpty() || maxStr.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "All fields must be filled.", "Input Error", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+            }
+            
             // Handle potential number format errors for Max Slots
-            int max = Integer.parseInt(jTextField8.getText());
+            int maxSlots = Integer.parseInt(maxStr);
             String accessibility = chkYes.isSelected() ? "Private" : "Public";
             String status = chkOpen.isSelected() ? "Open" : "Closed";
 
             if (editingData != null) {
-                // 2. Create the updated object keeping original IDs and slots
-                ModelEvents updatedEvent = new ModelEvents(
-                        editingData.getEventID(),
-                        editingData.getOwnerID(),
-                        name, date, venue,
-                        editingData.getFilledSlots(),
-                        max, status,
-                        editingData.getJoinedTime(),
-                        editingData.getLeftTime(),
-                        organizerName, accessibility, eventCode
-                );
+                // Database Update
+                String sql = "UPDATE events SET event_name = ?, event_date = ?, venue = ?, max_slots = ?, event_code = ?, WHERE event_id = ?";
+                
+                try (java.sql.Connection conn = DatabaseConnection.getConnection();
+                     java.sql.PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-                // 3. Find the index and swap the data in the Storage
-                int index = ModelEventStorage.eventList.indexOf(editingData);
-                if (index != -1) {
-                    ModelEventStorage.eventList.set(index, updatedEvent);
+                    pstmt.setString(1, name);
+                    pstmt.setString(2, date);
+                    pstmt.setString(3, venue);
+                    pstmt.setInt(4, maxSlots);
+                    pstmt.setString(5, eventCode.isEmpty() ? null : eventCode);
+                    pstmt.setString(6, status);
+                    pstmt.setInt(7, editingData.getEventID()); // The ID from the event currently being edited
 
-                    // 4. Show the MODERN NOTIFICATION (Snackbar)
-                    JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-                    Notification notif = new Notification(frame, "Event updated successfully!");
-                    notif.showNotification();
+                    int rowsAffected = pstmt.executeUpdate();
+                
+                    if (rowsAffected > 0) {
+                
+                    // Create the updated object keeping original IDs and slots
+                        ModelEvents updatedEvent = new ModelEvents(
+                            editingData.getEventID(),
+                            editingData.getOwnerID(),
+                            name, date, venue,
+                            editingData.getFilledSlots(),
+                            maxSlots, status,
+                            editingData.getJoinedTime(),
+                            editingData.getLeftTime(),
+                            organizerName, accessibility, eventCode
+                        );
+
+                        // Find the index and swap the data in the Storage
+                        int index = ModelEventStorage.eventList.indexOf(editingData);
+                        if (index != -1) {
+                            ModelEventStorage.eventList.set(index, updatedEvent);
+
+                        // Show the MODERN NOTIFICATION
+                        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+                        Notification notif = new Notification(frame, "Event updated successfully!");
+                        notif.showNotification();
+                        }
+
+                        // Go back to the list view immediately
+                        if (backEvent != null) {
+                            backEvent.actionPerformed(evt);
+                        }
+                    }
+                } catch (java.sql.SQLException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Database Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
-
-            // 5. Go back to the list view immediately
-            if (backEvent != null) {
-                backEvent.actionPerformed(evt);
-            }
-
         } catch (NumberFormatException e) {
             // Simple error handling if 'max slots' isn't a number
-            JOptionPane.showMessageDialog(this, "Please enter a valid number for slots.");
+            JOptionPane.showMessageDialog(this, "Please enter a valid number for slots.", "Format Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnUploadActionPerformed
 

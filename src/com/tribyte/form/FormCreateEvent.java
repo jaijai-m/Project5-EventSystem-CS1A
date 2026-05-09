@@ -3,6 +3,7 @@ package com.tribyte.form;
 import com.tribyte.model.ModelEventStorage;
 import com.tribyte.model.ModelEvents;
 import com.tribyte.utilities.UserSession;
+import database.connection.DatabaseConnection;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -11,6 +12,7 @@ import java.awt.event.ActionListener;
 import static javax.swing.BorderFactory.createEmptyBorder;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
@@ -25,6 +27,10 @@ public class FormCreateEvent extends JPanel {
 
     public FormCreateEvent() {
         initComponents();
+        // Pre-fill the organizer field with the Admin's full name from the session
+        jTextField6.setText(UserSession.getInstance().getUserName());
+        jTextField6.setEditable(false); // Cannot be edited/changed
+        
         setOpaque(false);
 
         ButtonGroup group = new ButtonGroup();
@@ -715,18 +721,20 @@ public class FormCreateEvent extends JPanel {
 
     private void btnUploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUploadActionPerformed
     
-    // Capture data from text fields
+    // Gather info from text fields
     String name = jTextField1.getText().trim();
     String date = jTextField2.getText().trim();
     String venue = jTextField7.getText().trim();
     String eventCode = jTextField3.getText().trim();
-    String organizerName = jTextField6.getText().trim();
+    //String organizerName = jTextField6.getText().trim();
     String maxStr = jTextField8.getText().trim();
+    
+    // Get the name of the User from the session
+    String organizerName = UserSession.getInstance().getUserName();
 
     //  Validation: Check if required fields are empty
     if (name.isEmpty() || date.isEmpty() || venue.isEmpty() || maxStr.isEmpty()) {
-        System.out.println("Please fill in the required fields.");
-        // TODO show a MessageDialog here
+        JOptionPane.showMessageDialog(this, "Please fill in the required fields.", "Input Error", JOptionPane.WARNING_MESSAGE);
         return;
     }
 
@@ -738,9 +746,10 @@ public class FormCreateEvent extends JPanel {
 
         // SQL Query
         // event_id and created_at are handled automatically by the database
+        // Save to Database
         String query = "INSERT INTO events (event_name, event_date, venue, max_slots, event_code, created_by) VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (java.sql.Connection conn = database.connection.DatabaseConnection.getConnection(); 
+        try (java.sql.Connection conn = DatabaseConnection.getConnection(); 
              java.sql.PreparedStatement pstmt = conn.prepareStatement(query)) {
 
             pstmt.setString(1, name);
@@ -748,7 +757,7 @@ public class FormCreateEvent extends JPanel {
             pstmt.setString(3, venue);
             pstmt.setInt(4, maxSlots);
             
-            // Standard check for optional event code
+            // Handle optional event code
             if (eventCode.isEmpty()) {
                 pstmt.setNull(5, java.sql.Types.VARCHAR);
             } else {
@@ -759,25 +768,32 @@ public class FormCreateEvent extends JPanel {
 
             // Execute Update and update Local Storage
             if (pstmt.executeUpdate() > 0) {
-                // If you still use the local list for UI updates, add it here
+                
+                // Get checkbox states for the Local List
                 String accessibility = chkYes.isSelected() ? "Private" : "Public";
                 String status = chkOpen.isSelected() ? "Open" : "Closed";
                 
+                // Create the model object for the UI (Local List)
                 ModelEvents newEvent = new ModelEvents(
                     0, adminId, name, date, venue, 0, maxSlots, status, "---", "---", organizerName, accessibility, eventCode
                 );
+                
+                // Add to the local storage so the Dashboard refreshes
                 ModelEventStorage.eventList.add(newEvent);
 
-                // Navigate back
+                // Success Feedback and Navigate back
+                JOptionPane.showMessageDialog(this, "Event Created Successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                
                 if (backEvent != null) { 
                     backEvent.actionPerformed(evt);
                 }
             }
         }
     } catch (NumberFormatException e) {
-        System.out.println("Error: Max slots must be a number.");
+        JOptionPane.showMessageDialog(this, "Max slots must be a number.", "Format Error", JOptionPane.ERROR_MESSAGE);
     } catch (java.sql.SQLException e) {
         e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Database Error: " + e.getMessage());
     }
 
     }//GEN-LAST:event_btnUploadActionPerformed

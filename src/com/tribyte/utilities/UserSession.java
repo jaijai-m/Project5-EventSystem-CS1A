@@ -11,7 +11,7 @@ package com.tribyte.utilities;
 public class UserSession {
     private static UserSession instance;
     private int userId;
-    private String name;
+    private String userName;
 
     private UserSession() {}
 
@@ -22,17 +22,21 @@ public class UserSession {
         return instance;
     }
 
-    public void setUser(int userId, String name) {
+    public void setUser(int userId, String userName) {
         this.userId = userId;
-        this.name = name;
+        this.userName = userName;
     }
 
     public int getUserId() {
         return userId;
     }
+    
+    public String getUserName() {
+        return userName;
+    }
 
     public void cleanUserSession() {
         userId = 0;
-        name = null;
+        userName = null;
     }
 }
