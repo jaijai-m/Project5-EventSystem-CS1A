@@ -14,6 +14,7 @@ import com.tribyte.form.FormHome;
 import com.tribyte.form.MainForm;
 import com.tribyte.model.ModelEvents;
 import com.tribyte.model.ModelMenu;
+import com.tribyte.utilities.UserSession;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -86,14 +87,23 @@ public class DashboardMain extends JFrame {
 
                         if ("Create New Event".equals(command)) {
                             FormCreateEvent createForm = new FormCreateEvent();
+                            
+                            // Go back to Events menu after creation
                             createForm.addBackEvent(ev -> selected(1));
                             showForm(createForm);
-                        } else if ("Edit Existing Events".equals(command) || "Manage Events".equals(command)) {
-                            FormEditExistingEvents editForm = new FormEditExistingEvents(userRole, userId);
+                        } else if ("Edit Existing Events".equals(command) || "Manage Events".equals(command)) { 
+                        // Get the REAL ID from the session for filtering
+                        int realID = UserSession.getInstance().getUserId();
+                            
+                            FormEditExistingEvents editForm = new FormEditExistingEvents(userRole, realID);
+                            
+                            // Refresh the table fromm the DB-synced list
+                            editForm.updateTable();
 
                             editForm.addEvent(ev -> {
                                 if ("EDIT_EVENT".equals(ev.getActionCommand())) {
                                     ModelEvents data = (ModelEvents) ev.getSource();
+                                    // Open the editor with the selected event data
                                     FormEditingEvent editingForm = new FormEditingEvent(data);
                                     editingForm.addBackEvent(back -> selected(1));
                                     showForm(editingForm);

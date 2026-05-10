@@ -5,6 +5,7 @@ import com.tribyte.swing.EventCellEditor;
 import com.tribyte.swing.EventCellRenderer;
 import com.tribyte.component.ItemEvent;
 import com.tribyte.model.ModelEventStorage;
+import com.tribyte.utilities.UserSession;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -104,13 +105,15 @@ public class FormEditExistingEvents extends JPanel {
         panelRound1.add(jScrollPane1, BorderLayout.CENTER);
     }
 
-    private void updateTable() {
+    public void updateTable() {
         DefaultTableModel model = (DefaultTableModel) table1.getModel();
         model.setRowCount(0);
-        String searchText = searchField.getText().toLowerCase();
+        
+        int sessionID = UserSession.getInstance().getUserId();
+        String searchText = (searchField == null) ? "" : searchField.getText().toLowerCase();
 
         for (ModelEvents ev : ModelEventStorage.eventList) {
-            boolean isMine = (ev.getOwnerID() == currentUserID);
+            boolean isMine = (ev.getOwnerID() == sessionID);
             boolean matchesSearch = ev.getName().toLowerCase().contains(searchText);
 
             if (isMine && matchesSearch) {

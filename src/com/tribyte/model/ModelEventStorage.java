@@ -1,6 +1,6 @@
 package com.tribyte.model;
 
-import com.tribyte.utilities.UserSession;
+import database.connection.DatabaseConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,22 +21,17 @@ public class ModelEventStorage {
         // Clear the local list first so no duplicates
         com.tribyte.model.ModelEventStorage.eventList.clear();
 
-        String sql = "SELECT * FROM events";
+        String sql = "SELECT e.*, CONCAT(u.first_name, ' ', IFNULL(u.middle_name, ' '), ' ', u.last_name) AS full_name " + 
+                     "FROM events e " +
+                     "JOIN users u ON e.created_by = u.user_id";
 
-        try (java.sql.Connection conn = database.connection.DatabaseConnection.getConnection();
+        try (java.sql.Connection conn = DatabaseConnection.getConnection();
             java.sql.PreparedStatement pstmt = conn.prepareStatement(sql);
             java.sql.ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
-                // Get the numbers first
-                int filled = rs.getInt("filled_slots");
-                int max = rs.getInt("max_slots");
-                String professor = UserSession.getInstance().getUserName();
+                String professor = rs.getString("full_name");
 
-                // Calculate the status locally
-                // If filled is equal or more than max, the status is "Closed"
-                String status = (filled >= max) ? "Closed" : "Open";
-                
                 // Create the Model object for each row in the database
                 ModelEvents event = new ModelEvents(
                     rs.getInt("event_id"),
@@ -44,17 +39,17 @@ public class ModelEventStorage {
                     rs.getString("event_name"),
                     rs.getString("event_date"),
                     rs.getString("venue"),
-                    filled,
-                    max,
-                    status,
+                    rs.getInt("filled_slots"),
+                    rs.getInt("max_slots"),
+                    rs.getString("status"),
                     "---", "---", // Placeholder for joined/left times
                     professor,     
-                    "Public",     // Placeholder for accessibility
+                    rs.getString("accessibility"),
                     rs.getString("event_code")
                 );
 
                 // Add it to the Local List
-                ModelEventStorage.eventList.add(event);
+                eventList.add(event);
             }
         } catch (java.sql.SQLException e) {
             e.printStackTrace();

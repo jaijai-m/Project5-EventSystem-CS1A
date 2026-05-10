@@ -1,7 +1,8 @@
 package com.tribyte.form;
 
+import com.tribyte.dialog.Notification;
 import com.tribyte.model.ModelEventStorage;
-import com.tribyte.model.ModelEvents;
+//import com.tribyte.model.ModelEvents;
 import com.tribyte.utilities.UserSession;
 import database.connection.DatabaseConnection;
 import java.awt.Color;
@@ -12,6 +13,7 @@ import java.awt.event.ActionListener;
 import static javax.swing.BorderFactory.createEmptyBorder;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -20,6 +22,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import javax.swing.text.DocumentFilter.FilterBypass;
+import javax.swing.SwingUtilities;
 
 public class FormCreateEvent extends JPanel {
     
@@ -743,11 +746,15 @@ public class FormCreateEvent extends JPanel {
         
         // Automatically pull ID from UserSession
         int adminId = UserSession.getInstance().getUserId();
+        
+        // Get checkbox states
+        String accessibility = chkYes.isSelected() ? "Private" : "Public";
+        String status = chkOpen.isSelected() ? "Open" : "Lock";
 
         // SQL Query
         // event_id and created_at are handled automatically by the database
         // Save to Database
-        String query = "INSERT INTO events (event_name, event_date, venue, max_slots, event_code, created_by) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO events (event_name, event_date, venue, filled_slots, max_slots, status, accessibility, event_code, created_by) VALUES (?, ?, ?, 0, ?, ?, ?, ?, ?)";
 
         try (java.sql.Connection conn = DatabaseConnection.getConnection(); 
              java.sql.PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -756,34 +763,30 @@ public class FormCreateEvent extends JPanel {
             pstmt.setString(2, date); 
             pstmt.setString(3, venue);
             pstmt.setInt(4, maxSlots);
-            
+            pstmt.setString(5, status);
+            pstmt.setString(6, accessibility);
+
             // Handle optional event code
             if (eventCode.isEmpty()) {
-                pstmt.setNull(5, java.sql.Types.VARCHAR);
+                pstmt.setNull(7, java.sql.Types.VARCHAR);
             } else {
-                pstmt.setString(5, eventCode);
+                pstmt.setString(7, eventCode);
             }
             
-            pstmt.setInt(6, adminId);
+            pstmt.setInt(8, adminId);
 
-            // Execute Update and update Local Storage
+            // Execute Update
             if (pstmt.executeUpdate() > 0) {
                 
-                // Get checkbox states for the Local List
-                String accessibility = chkYes.isSelected() ? "Private" : "Public";
-                String status = chkOpen.isSelected() ? "Open" : "Closed";
-                
-                // Create the model object for the UI (Local List)
-                ModelEvents newEvent = new ModelEvents(
-                    0, adminId, name, date, venue, 0, maxSlots, status, "---", "---", organizerName, accessibility, eventCode
-                );
-                
-                // Add to the local storage so the Dashboard refreshes
-                ModelEventStorage.eventList.add(newEvent);
+                // Call the loader to ensure we get the real Database ID and the JOINED Professor/Event Creator name correctly.
+                ModelEventStorage.loadEventsFromDatabase();
 
-                // Success Feedback and Navigate back
-                JOptionPane.showMessageDialog(this, "Event Created Successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                // Success Feedback
+                JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+                Notification notif = new Notification(frame, "Event Created Successfully!");
+                notif.showNotification();
                 
+                // Navigate back                
                 if (backEvent != null) { 
                     backEvent.actionPerformed(evt);
                 }

@@ -30,8 +30,9 @@ public class FormEditingEvent extends JPanel {
     private ModelEvents editingData;
 
     public FormEditingEvent(ModelEvents data) {
-        this.editingData = data;
+        //this.editingData = data;
         initComponents();
+        setEventData(data);
         setOpaque(false);
 
         ButtonGroup group = new ButtonGroup();
@@ -74,6 +75,29 @@ public class FormEditingEvent extends JPanel {
         }
     }
 
+    public void setEventData(ModelEvents data) {
+        this.editingData = data;
+        
+        // Pre-fill fields with existing data
+        jTextField1.setText(data.getName());
+        jTextField2.setText(data.getDate());
+        jTextField7.setText(data.getVenue());
+        jTextField3.setText(data.getEventCode());
+        jTextField8.setText(String.valueOf(data.getMaxSlots()));
+        jTextField6.setText(data.getProfessor());
+        jTextField6.setEditable(false); // Admin name should not be edited
+        
+        // Handling Checkboxes
+        if (data.getStatus().equalsIgnoreCase("Open")) {
+            chkOpen.setSelected(true);
+            chkLock.setSelected(false);
+        } else if (data.getStatus().equalsIgnoreCase("Lock")) {
+            chkOpen.setSelected(false);
+            chkLock.setSelected(true);
+        }        
+        chkYes.setSelected(data.getAccessibility().equalsIgnoreCase("Private"));
+    }
+    
     public void loadData(ModelEvents data) {
         jTextField1.setText(data.getName());           // Event Name
         jTextField2.setText(data.getDate());           // Date
@@ -100,6 +124,7 @@ public class FormEditingEvent extends JPanel {
 
     public void addBackEvent(ActionListener event) {
         this.backEvent = event;
+        btnBack.addActionListener(event);
     }
 
     private void styleTextField(JTextField field) {
@@ -742,18 +767,35 @@ public class FormEditingEvent extends JPanel {
 
             // Validation
             if (name.isEmpty() || date.isEmpty() || venue.isEmpty() || maxStr.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "All fields must be filled.", "Input Error", javax.swing.JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "All fields must be filled.", "Input Error", JOptionPane.WARNING_MESSAGE);
             return;
             }
             
             // Handle potential number format errors for Max Slots
             int maxSlots = Integer.parseInt(maxStr);
+            int currentFilled = editingData.getFilledSlots();
+            
+            // Prevent setting max lower than filled slots
+            if (maxSlots < currentFilled) {
+                JOptionPane.showMessageDialog(this, "New max slots cannot be lower than the " + currentFilled + " students already registered.", "Invalid Max Slots", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            // Auto-Lock Status Logic
+            // If capacity is reached exactly, force "Lock"
+            String status;
+            if (currentFilled >= maxSlots) {
+                status = "Lock";
+            } else {
+                status = chkOpen.isSelected() ? "Open" : "Lock";
+            }
+            
             String accessibility = chkYes.isSelected() ? "Private" : "Public";
-            String status = chkOpen.isSelected() ? "Open" : "Closed";
 
             if (editingData != null) {
+                
                 // Database Update
-                String sql = "UPDATE events SET event_name = ?, event_date = ?, venue = ?, max_slots = ?, event_code = ?, WHERE event_id = ?";
+                String sql = "UPDATE events SET event_name = ?, event_date = ?, venue = ?, max_slots = ?, event_code = ?, status = ?, accessibility = ? WHERE event_id = ?";
                 
                 try (java.sql.Connection conn = DatabaseConnection.getConnection();
                      java.sql.PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -762,9 +804,16 @@ public class FormEditingEvent extends JPanel {
                     pstmt.setString(2, date);
                     pstmt.setString(3, venue);
                     pstmt.setInt(4, maxSlots);
-                    pstmt.setString(5, eventCode.isEmpty() ? null : eventCode);
+                    
+                    if (accessibility.equals("Private")) {
+                        pstmt.setString(5, eventCode); // Keep event_code if it's Private
+                    } else {
+                        pstmt.setNull(5, java.sql.Types.VARCHAR); // Wipe event_code if it's set to Public
+                    }
+                    
                     pstmt.setString(6, status);
-                    pstmt.setInt(7, editingData.getEventID()); // The ID from the event currently being edited
+                    pstmt.setString(7, accessibility);
+                    pstmt.setInt(8, editingData.getEventID());
 
                     int rowsAffected = pstmt.executeUpdate();
                 
@@ -775,8 +824,7 @@ public class FormEditingEvent extends JPanel {
                             editingData.getEventID(),
                             editingData.getOwnerID(),
                             name, date, venue,
-                            editingData.getFilledSlots(),
-                            maxSlots, status,
+                            currentFilled, maxSlots, status,
                             editingData.getJoinedTime(),
                             editingData.getLeftTime(),
                             organizerName, accessibility, eventCode
@@ -786,12 +834,12 @@ public class FormEditingEvent extends JPanel {
                         int index = ModelEventStorage.eventList.indexOf(editingData);
                         if (index != -1) {
                             ModelEventStorage.eventList.set(index, updatedEvent);
-
-                        // Show the MODERN NOTIFICATION
-                        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-                        Notification notif = new Notification(frame, "Event updated successfully!");
-                        notif.showNotification();
                         }
+                        
+                        // Success NOTIFICATION
+                        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+                        Notification notif = new Notification(frame, (status.equals("Closed") && currentFilled == maxSlots) ? "Event updated and Closed (Full)!" : "Event updated successfully!");
+                        notif.showNotification();
 
                         // Go back to the list view immediately
                         if (backEvent != null) {
@@ -800,7 +848,7 @@ public class FormEditingEvent extends JPanel {
                     }
                 } catch (java.sql.SQLException ex) {
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Database Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Database Error: " + ex.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
                 }
             }
         } catch (NumberFormatException e) {
