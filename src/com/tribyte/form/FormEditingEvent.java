@@ -1,6 +1,6 @@
 package com.tribyte.form;
 
-import com.tribyte.dialog.Notification;
+import com.tribyte.connection.ConnectDatabase;
 import com.tribyte.model.ModelEventStorage;
 import com.tribyte.model.ModelEvents;
 import java.awt.Color;
@@ -11,11 +11,9 @@ import java.awt.event.ActionListener;
 import static javax.swing.BorderFactory.createEmptyBorder;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -48,8 +46,8 @@ public class FormEditingEvent extends JPanel {
         styleTextField(jTextField1);
         styleTextField(jTextField2);
         styleTextField(jTextField3);
-        styleTextField(jTextField5);
-        styleTextField(jTextField6);
+        //styleTextField(jTextField5);
+        //styleTextField(jTextField6);
         styleTextField(jTextField7);
         styleTextField(jTextField8);
 
@@ -63,7 +61,7 @@ public class FormEditingEvent extends JPanel {
         });
 
         // Numeric Filters
-        ((AbstractDocument) jTextField5.getDocument()).setDocumentFilter(new NumericFilter());
+        //((AbstractDocument) jTextField5.getDocument()).setDocumentFilter(new NumericFilter());
         ((AbstractDocument) jTextField8.getDocument()).setDocumentFilter(new NumericFilter());
 
         // Loads data
@@ -75,10 +73,10 @@ public class FormEditingEvent extends JPanel {
     public void loadData(ModelEvents data) {
         jTextField1.setText(data.getName());           
         jTextField2.setText(data.getDate());           
-        jTextField6.setText(data.getProfessor());      
+        //jTextField6.setText(data.getProfessor());      
         jTextField7.setText(data.getVenue());         
         jTextField8.setText(String.valueOf(data.getMaxSlots())); 
-        jTextField5.setText(String.valueOf(data.getOwnerID())); 
+        //jTextField5.setText(String.valueOf(data.getOwnerID())); 
 
         if (data.getAccessibility().equalsIgnoreCase("Private")) {
             chkYes.setSelected(true);
@@ -164,18 +162,10 @@ public class FormEditingEvent extends JPanel {
         txt2 = new com.tribyte.swing.PanelRound();
         jLabel2 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
-        txtNameEventOrganizer = new com.tribyte.swing.PanelRound();
-        txt8 = new com.tribyte.swing.PanelRound();
-        jLabel8 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
         txtInsertCode = new com.tribyte.swing.PanelRound();
         txt3 = new com.tribyte.swing.PanelRound();
         jLabel3 = new javax.swing.JLabel();
         jTextField3 = new javax.swing.JTextField();
-        txtEnterID = new com.tribyte.swing.PanelRound();
-        txt7 = new com.tribyte.swing.PanelRound();
-        jLabel7 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
         txtRequireECode = new com.tribyte.swing.PanelRound();
         jLabel10 = new javax.swing.JLabel();
         chkNo = new javax.swing.JCheckBox();
@@ -302,55 +292,6 @@ public class FormEditingEvent extends JPanel {
             .addComponent(txt2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        txtNameEventOrganizer.setBackground(new java.awt.Color(204, 204, 204));
-
-        txt8.setBackground(new java.awt.Color(4, 149, 22));
-
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel8.setText("Name of Event Organizer");
-
-        javax.swing.GroupLayout txt8Layout = new javax.swing.GroupLayout(txt8);
-        txt8.setLayout(txt8Layout);
-        txt8Layout.setHorizontalGroup(
-            txt8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(txt8Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        txt8Layout.setVerticalGroup(
-            txt8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, txt8Layout.createSequentialGroup()
-                .addContainerGap(13, Short.MAX_VALUE)
-                .addComponent(jLabel8)
-                .addGap(12, 12, 12))
-        );
-
-        jTextField6.setEditable(false);
-        jTextField6.setBackground(new java.awt.Color(204, 204, 204));
-        jTextField6.addActionListener(this::jTextField6ActionPerformed);
-
-        javax.swing.GroupLayout txtNameEventOrganizerLayout = new javax.swing.GroupLayout(txtNameEventOrganizer);
-        txtNameEventOrganizer.setLayout(txtNameEventOrganizerLayout);
-        txtNameEventOrganizerLayout.setHorizontalGroup(
-            txtNameEventOrganizerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, txtNameEventOrganizerLayout.createSequentialGroup()
-                .addComponent(txt8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField6)
-                .addContainerGap())
-        );
-        txtNameEventOrganizerLayout.setVerticalGroup(
-            txtNameEventOrganizerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(txtNameEventOrganizerLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jTextField6)
-                .addContainerGap())
-            .addComponent(txt8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-
         txtInsertCode.setBackground(new java.awt.Color(204, 204, 204));
 
         txt3.setBackground(new java.awt.Color(4, 149, 22));
@@ -398,55 +339,6 @@ public class FormEditingEvent extends JPanel {
                 .addComponent(jTextField3)
                 .addContainerGap())
             .addComponent(txt3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-
-        txtEnterID.setBackground(new java.awt.Color(204, 204, 204));
-
-        txt7.setBackground(new java.awt.Color(4, 149, 22));
-
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel7.setText("Enter ID (Admin/Staff)");
-
-        javax.swing.GroupLayout txt7Layout = new javax.swing.GroupLayout(txt7);
-        txt7.setLayout(txt7Layout);
-        txt7Layout.setHorizontalGroup(
-            txt7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(txt7Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        txt7Layout.setVerticalGroup(
-            txt7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, txt7Layout.createSequentialGroup()
-                .addContainerGap(13, Short.MAX_VALUE)
-                .addComponent(jLabel7)
-                .addGap(12, 12, 12))
-        );
-
-        jTextField5.setEditable(false);
-        jTextField5.setBackground(new java.awt.Color(204, 204, 204));
-        jTextField5.addActionListener(this::jTextField5ActionPerformed);
-
-        javax.swing.GroupLayout txtEnterIDLayout = new javax.swing.GroupLayout(txtEnterID);
-        txtEnterID.setLayout(txtEnterIDLayout);
-        txtEnterIDLayout.setHorizontalGroup(
-            txtEnterIDLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, txtEnterIDLayout.createSequentialGroup()
-                .addComponent(txt7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField5)
-                .addContainerGap())
-        );
-        txtEnterIDLayout.setVerticalGroup(
-            txtEnterIDLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(txtEnterIDLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jTextField5)
-                .addContainerGap())
-            .addComponent(txt7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         txtRequireECode.setBackground(new java.awt.Color(4, 149, 22));
@@ -641,9 +533,7 @@ public class FormEditingEvent extends JPanel {
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelRound1Layout.createSequentialGroup()
                         .addGroup(panelRound1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtEnterID, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtInsertCode, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtNameEventOrganizer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtDateEvent, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtNameEvent, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtEventVenue, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -662,8 +552,6 @@ public class FormEditingEvent extends JPanel {
                 .addGap(30, 30, 30)
                 .addComponent(txtDateEvent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
-                .addComponent(txtNameEventOrganizer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
                 .addComponent(txtEventVenue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
                 .addComponent(txtMaxSlots, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -674,8 +562,6 @@ public class FormEditingEvent extends JPanel {
                     .addComponent(chkNo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(30, 30, 30)
                 .addComponent(txtInsertCode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
-                .addComponent(txtEnterID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
                 .addGroup(panelRound1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(chkOpen, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -713,7 +599,7 @@ public class FormEditingEvent extends JPanel {
                     .addComponent(txt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(panelRound1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(175, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -730,59 +616,60 @@ public class FormEditingEvent extends JPanel {
     }//GEN-LAST:event_jTextField3ActionPerformed
 
     private void btnUploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUploadActionPerformed
-        try {
-            String name = jTextField1.getText();
-            String date = jTextField2.getText();
-            String venue = jTextField7.getText();
-            String eventCode = jTextField3.getText();
-            String organizerName = jTextField6.getText();
+            String name = jTextField1.getText().trim();
+            String date = jTextField2.getText().trim();
+            String venue = jTextField7.getText().trim();
+            String eventCode = jTextField3.getText().trim();
+            //String organizerName = jTextField6.getText();
 
-            int max = Integer.parseInt(jTextField8.getText());
+            int max;
+            try {
+                max = Integer.parseInt(jTextField8.getText().trim());
+            } catch (NumberFormatException e) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Please enter a valid number for Maximum Slots.");
+                return;
+            }
+
             String accessibility = chkYes.isSelected() ? "Private" : "Public";
-            String status = chkOpen.isSelected() ? "Open" : "Closed";
+            String status = chkOpen.isSelected() ? "Open" : "Lock";
 
+            // 2. Create the updated model using the ORIGINAL ID and Professor
             if (editingData != null) {
-                ModelEvents updatedEvent = new ModelEvents(
-                        editingData.getEventID(),
-                        editingData.getOwnerID(),
-                        name, date, venue,
-                        editingData.getFilledSlots(),
-                        max, status,
-                        editingData.getJoinedTime(),
-                        editingData.getLeftTime(),
-                        organizerName, accessibility, eventCode
-                );
+            com.tribyte.model.ModelEvents updatedEvent = new com.tribyte.model.ModelEvents(
+                    editingData.getEventID(),
+                    editingData.getOwnerID(),
+                    name,
+                    date,
+                    venue,
+                    editingData.getFilledSlots(),
+                    max,
+                    status,
+                    editingData.getJoinedTime(),
+                    editingData.getLeftTime(),
+                    editingData.getProfessor(),
+                    accessibility,
+                    eventCode
+            );
 
-                int index = ModelEventStorage.eventList.indexOf(editingData);
-                if (index != -1) {
-                    ModelEventStorage.eventList.set(index, updatedEvent);
+            ConnectDatabase db = new ConnectDatabase();
+            boolean success = db.updateEvent(updatedEvent);
 
-                    JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-                    Notification notif = new Notification(frame, "Event updated successfully!");
-                    notif.showNotification();
+            if (success) {
+                JOptionPane.showMessageDialog(this, "Event Updated Successfully!");
+                ModelEventStorage.loadFromDatabase();
+
+                if (backEvent != null) {
+                    backEvent.actionPerformed(evt);
                 }
+            } else {
+                JOptionPane.showMessageDialog(this, "Failed to update event in database.");
             }
-
-            if (backEvent != null) {
-                backEvent.actionPerformed(evt);
-            }
-
-        } catch (NumberFormatException e) { 
-           JOptionPane.showMessageDialog(this, "Please enter a valid number for slots.");
         }
     }//GEN-LAST:event_btnUploadActionPerformed
-
-    private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField5ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField5ActionPerformed
 
     private void chkYesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkYesActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_chkYesActionPerformed
-
-    private void jTextField6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField6ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField6ActionPerformed
 
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
         // TODO add your handling code here:
@@ -814,15 +701,11 @@ public class FormEditingEvent extends JPanel {
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
     private javax.swing.JTextField jTextField7;
     private javax.swing.JTextField jTextField8;
     private javax.swing.JLabel lbImage;
@@ -832,16 +715,12 @@ public class FormEditingEvent extends JPanel {
     private com.tribyte.swing.PanelRound txt10;
     private com.tribyte.swing.PanelRound txt2;
     private com.tribyte.swing.PanelRound txt3;
-    private com.tribyte.swing.PanelRound txt7;
-    private com.tribyte.swing.PanelRound txt8;
     private com.tribyte.swing.PanelRound txt9;
     private com.tribyte.swing.PanelRound txtDateEvent;
-    private com.tribyte.swing.PanelRound txtEnterID;
     private com.tribyte.swing.PanelRound txtEventVenue;
     private com.tribyte.swing.PanelRound txtInsertCode;
     private com.tribyte.swing.PanelRound txtMaxSlots;
     private com.tribyte.swing.PanelRound txtNameEvent;
-    private com.tribyte.swing.PanelRound txtNameEventOrganizer;
     private com.tribyte.swing.PanelRound txtRequireECode;
     private com.tribyte.swing.PanelRound txtStatus;
     // End of variables declaration//GEN-END:variables

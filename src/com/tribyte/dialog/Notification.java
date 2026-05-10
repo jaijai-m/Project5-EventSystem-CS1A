@@ -16,6 +16,8 @@ import org.jdesktop.animation.timing.TimingTargetAdapter;
             this.parent = parent;
             this.message = message;
             setOpaque(false);
+            int width = Math.max(200, message.length() * 10);
+            setPreferredSize(new Dimension(width, 40));
             initComponents();
         }
 

@@ -25,6 +25,8 @@ public class FormEditExistingEvents extends JPanel {
     }
 
     public FormEditExistingEvents(String role, int userID) {
+        ModelEventStorage.loadFromDatabase();
+                
         this.currentUserID = userID; 
         initComponents();
         setOpaque(false);
@@ -54,7 +56,8 @@ public class FormEditExistingEvents extends JPanel {
             }
         });
 
-        setLayout(new MigLayout("fill, wrap 1, insets 12", "[grow, fill]", "[]0[]12[fill, grow]"));
+        setLayout(new MigLayout("fillx, wrap, insets 12", "[fill, grow]", "[]0[]20[]"));
+
         this.removeAll();
 
         JPanel titlePanel = new JPanel(new MigLayout("insets 0", "[]5[]", "[]"));
@@ -67,7 +70,7 @@ public class FormEditExistingEvents extends JPanel {
         setupTableProperties();
         updateTable();
 
-        this.add(panelRound1, "grow");
+        this.add(panelRound1, "growx");
 
         this.revalidate();
         this.repaint();
@@ -75,6 +78,8 @@ public class FormEditExistingEvents extends JPanel {
 
     private void setupTableProperties() {
         table1.fixTable(jScrollPane1);
+        table1.setFillsViewportHeight(true);
+        
         table1.setModel(new DefaultTableModel(new Object[][]{}, new String[]{""}));
         table1.setTableHeader(null);
 
@@ -102,6 +107,8 @@ public class FormEditExistingEvents extends JPanel {
         panelRound1.setLayout(new BorderLayout());
         panelRound1.add(headerPanel, BorderLayout.NORTH);
         panelRound1.add(jScrollPane1, BorderLayout.CENTER);
+        
+        jScrollPane1.setPreferredSize(new Dimension(jScrollPane1.getPreferredSize().width, 800));
     }
 
     private void updateTable() {
@@ -207,7 +214,7 @@ public class FormEditExistingEvents extends JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(panelRound1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1222, Short.MAX_VALUE)
                 .addContainerGap())
         );
         panelRound1Layout.setVerticalGroup(
@@ -216,7 +223,7 @@ public class FormEditExistingEvents extends JPanel {
                 .addGap(12, 12, 12)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 583, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -231,17 +238,18 @@ public class FormEditExistingEvents extends JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addComponent(btnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txt)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbImage)
-                .addContainerGap(843, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(panelRound1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(6, 6, 6))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(5, 5, 5)
+                        .addComponent(btnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txt)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lbImage))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(panelRound1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

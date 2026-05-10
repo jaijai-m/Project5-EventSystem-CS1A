@@ -12,6 +12,7 @@ import com.tribyte.form.FormEditingEvent;
 import com.tribyte.form.FormEventAttendees;
 import com.tribyte.form.FormHome;
 import com.tribyte.form.MainForm;
+import com.tribyte.model.ModelEventStorage;
 import com.tribyte.model.ModelEvents;
 import com.tribyte.model.ModelMenu;
 import java.awt.BorderLayout;
@@ -38,7 +39,9 @@ public class DashboardMain extends JFrame {
     private Header header;
     private MainForm main;
     
-    public DashboardMain() {
+    public DashboardMain(String role, int id) {
+        this.userRole = role;
+        this.userId = id;
         initComponents();
         init();
     }
@@ -65,6 +68,8 @@ public class DashboardMain extends JFrame {
             @Override
             public void selected(int menuIndex) {
                 if (menuIndex == 0) {
+                    ModelEventStorage.loadFromDatabase();
+
                     FormHome home = new FormHome(userRole, userId);
 
                     home.addEvent(e -> {
@@ -77,7 +82,7 @@ public class DashboardMain extends JFrame {
                     });
 
                     showForm(home);
-                } 
+                }
                 else if (menuIndex == 1) {
                     FormEvents fEvents = new FormEvents(userRole);
 
@@ -232,7 +237,7 @@ public class DashboardMain extends JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new DashboardMain().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new DashboardMain("Admin", 101).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

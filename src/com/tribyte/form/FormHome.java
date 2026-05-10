@@ -1,5 +1,6 @@
 package com.tribyte.form;
 
+import com.tribyte.connection.ConnectDatabase;
 import com.tribyte.dialog.Message;
 import com.tribyte.model.ModelCard;
 import com.tribyte.model.ModelEventStorage;
@@ -17,7 +18,7 @@ import net.miginfocom.swing.MigLayout;
 public class FormHome extends JPanel {
 
     private String role;
-    private int currentUserId; // To track which events the Admin owns
+    private int currentUserId; 
     private ActionListener event; 
 
     public void addEvent(ActionListener event) {
@@ -25,6 +26,7 @@ public class FormHome extends JPanel {
     }
 
     public FormHome(String role, int currentUserId) {
+        ModelEventStorage.loadFromDatabase();
         this.role = role;
         this.currentUserId = currentUserId;
 
@@ -32,25 +34,34 @@ public class FormHome extends JPanel {
         table1.fixTable(jScrollPane1);
         setOpaque(false);
 
-        setLayout(new MigLayout("fillx, wrap 4, insets 10", "[fill, grow]15[fill, grow]15[fill, grow]15[fill, grow]", "[]0[]0[]20[fill, grow]"));
+        boolean isRegistrant = "Registrant".equals(role);
+
+        String wrapCount = isRegistrant ? "wrap 2" : "wrap 4";
+        String colConstraints = isRegistrant ? "[fill, grow]15[fill, grow]" : "[fill, grow]15[fill, grow]15[fill, grow]15[fill, grow]";
+
+        setLayout(new MigLayout("fillx, " + wrapCount + ", insets 10", colConstraints, "[]0[]0[]20[fill, grow]"));
+
         this.removeAll();
-        
+
         JPanel titlePanel = new JPanel(new MigLayout("insets 0", "[]5[]", "[]"));
         titlePanel.setOpaque(false);
         titlePanel.add(txt);
-        titlePanel.add(lbImage); 
+        titlePanel.add(lbImage);
 
         add(titlePanel, "span, growx, gapbottom -10");
         add(txtSub, "span, growx, gapbottom 12");
 
         add(card1, "growx");
         add(card2, "growx");
-        add(card3, "growx");
-        add(card4, "growx");
+
+        if (!isRegistrant) {
+            add(card3, "growx");
+            add(card4, "growx");
+        }
 
         add(panelRound1, "span, grow");
-         
-        if ("Student".equals(role)) {
+
+        if (isRegistrant) {
             table1.getColumnModel().getColumn(4).setMinWidth(0);
             table1.getColumnModel().getColumn(4).setMaxWidth(0);
             table1.getColumnModel().getColumn(4).setWidth(0);
@@ -69,13 +80,22 @@ public class FormHome extends JPanel {
             @Override
             public void delete(ModelEvents events) {
                 if (canModify(events)) {
-                    if (showConfirm("Confirm Deletion", "Do you want to delete:\n " + events.getName() + "?", "Be careful, this action is permanent.")) {
-                        ModelEventStorage.eventList.remove(events);
-                        initTableData();
-                        // SQL delete logic goes here
+                    if (showConfirm("Confirm Deletion", "Do you want to delete:\n " + events.getName() + "?", "This action is permanent and will remove all registrations.")) {
+
+                        ConnectDatabase db = new ConnectDatabase();
+                        if (db.deleteEvent(events.getEventID())) {
+
+                            ModelEventStorage.loadFromDatabase();
+
+                            initTableData();
+
+                            System.out.println("Event deleted from DB successfully.");
+                        } else {
+                            showWarning("Database Error", "Failed to delete the event from the database.", "Please contact an admin");
+                        }
                     }
                 } else {
-                    showWarning("Permission Denied", "You can only delete your own events.");
+                    showWarning("Permission Denied", "You cannot perform this action.", "Please contact the admin.");
                 }
             }
 
@@ -84,11 +104,12 @@ public class FormHome extends JPanel {
                 if (canModify(events)) {
                     if (showConfirm("Updating Event", "Do you want to edit:\n " + events.getName() + "?", "This will open the editor.")) {
                         if (event != null) {
-                            event.actionPerformed(new ActionEvent(events, java.awt.event.ActionEvent.ACTION_PERFORMED, "EDIT_EVENT"));
+                            event.actionPerformed(new ActionEvent(events, ActionEvent.ACTION_PERFORMED, "EDIT_EVENT"));
                         }
                     }
                 } else {
-                    showWarning("Access Denied", "You can only edit events you created.");
+                    String sub = "This event is not yours. Please ask " + events.getProfessor() + " (the creator) to delete or update it.";
+                    showWarning("Access Denied", "Action Restricted", sub);
                 }
             }
         };
@@ -97,9 +118,16 @@ public class FormHome extends JPanel {
         model.setRowCount(0);
 
         for (ModelEvents ev : ModelEventStorage.eventList) {
-            table1.addRow(ev.toRowTable(eventAction));
+            if ("Registrant".equals(role)) {
+                if (ev.isUserJoined(currentUserId)) {
+                    table1.addRow(ev.toRowTable(eventAction));
+                }
+            } else {
+                table1.addRow(ev.toRowTable(eventAction));
+            }
         }
     }
+    
     private boolean canModify(ModelEvents event) {
         if ("Staff".equals(role)) {
             return true;
@@ -110,22 +138,39 @@ public class FormHome extends JPanel {
         return false;
     }
 
-    private void showWarning(String title, String message) {
+    private void showWarning(String title, String message, String subMessage) {
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
         Message obj = new Message(frame);
-        obj.showMessage(title, message, "Please contact the main office if this is an error.");
+        obj.showMessage(title, message, subMessage);
     }
     
     private void initCardData() {
+        ConnectDatabase db = new ConnectDatabase();
+        
         ImageIcon icon1 = new ImageIcon(getClass().getResource("/com/tribyte/icon/eventDboard.png"));
-        card1.setData(new ModelCard("Total Events", 10, 20, icon1));
         ImageIcon icon2 = new ImageIcon(getClass().getResource("/com/tribyte/icon/checkDboard.png"));
-        card2.setData(new ModelCard("Total Attendees", 10, 20, icon2));
         ImageIcon icon3 = new ImageIcon(getClass().getResource("/com/tribyte/icon/plusDboard.png"));
-        card3.setData(new ModelCard("Registrations", 10, 20, icon3));
         ImageIcon icon4 = new ImageIcon(getClass().getResource("/com/tribyte/icon/upcomingEvent.png"));
-        card4.setData(new ModelCard("Upcoming Events", 10, 20, icon4));
-    }    
+
+        if ("Registrant".equals(role)) {
+            // Registrant/Student POV
+            int joinedCount = db.getCount("registrations", "user_id = " + currentUserId);
+            card1.setData(new ModelCard("Events I Joined", joinedCount, 100, icon1));
+
+            int attendedCount = db.getCount("registrations", "user_id = " + currentUserId + " AND attendance_status = 'Present'");
+            card2.setData(new ModelCard("Events Attended", attendedCount, 100, icon2));
+        } else {
+            // Admin and Staff POV
+            int totalEvents = db.getCount("events", "");
+            int totalRegistrations = db.getCount("registrations", "");
+            int upcoming = db.getCount("events", "event_date >= CURDATE()");
+
+            card1.setData(new ModelCard("Total Events", totalEvents, 100, icon1));
+            card2.setData(new ModelCard("Total Attendees", totalRegistrations, 100, icon2));
+            card3.setData(new ModelCard("Registrations", totalRegistrations, 100, icon3));
+            card4.setData(new ModelCard("Upcoming Events", upcoming, 100, icon4));
+        }
+    }  
     
     private boolean showConfirm(String title, String message, String subMessage) {
     JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);

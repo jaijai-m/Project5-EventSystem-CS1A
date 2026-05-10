@@ -1,12 +1,15 @@
 package com.tribyte.swing;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.RenderingHints;
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JTextField;
@@ -42,12 +45,18 @@ public class MyTextField extends JTextField {
     private Icon prefixIcon;
     private Icon suffixIcon;
     private String hint = "";
+    private Color borderColor = new Color(210, 230, 225);
+    
+    public void setLineColor(Color color) {
+        this.borderColor = color;
+        repaint();
+    }
 
     public MyTextField() {
-        setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setBackground(new Color(0, 0, 0, 0));
         setForeground(new Color(105, 105, 105));
-        setFont(new java.awt.Font("sansserif", 1, 13)); 
+        setFont(new Font("sansserif", 1, 13)); 
         setSelectionColor(new Color(130, 130, 130, 160));
     }
 
@@ -55,8 +64,18 @@ public class MyTextField extends JTextField {
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        //BG
         g2.setColor(new Color(210, 230, 225));
         g2.fillRoundRect(0, 0, getWidth(), getHeight(), 5, 5);
+        if (borderColor.equals(Color.RED)) {
+            g2.setStroke(new BasicStroke(2)); // Make red border thicker
+        } else {
+            g2.setStroke(new BasicStroke(1));
+        }
+        //Border
+        g2.setColor(borderColor);
+        g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 5, 5);
+
         paintIcon(g);
         super.paintComponent(g);
     }
@@ -68,7 +87,7 @@ public class MyTextField extends JTextField {
             int h = getHeight();
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-            g2.setFont(getFont().deriveFont(java.awt.Font.BOLD));
+            g2.setFont(getFont().deriveFont(Font.BOLD));
             g2.setColor(new Color(110, 125, 120, 150)); 
             Insets ins = getInsets();
             FontMetrics fm = g.getFontMetrics();
@@ -99,6 +118,6 @@ public class MyTextField extends JTextField {
         if (suffixIcon != null) {
             right = suffixIcon.getIconWidth() + 15;
         }
-        setBorder(javax.swing.BorderFactory.createEmptyBorder(10, left, 10, right));
+        setBorder(BorderFactory.createEmptyBorder(10, left, 10, right));
     }
 }

@@ -4,6 +4,7 @@ import com.tribyte.model.ModelEvents;
 import com.tribyte.swing.EventCellEditor;
 import com.tribyte.swing.EventCellRenderer;
 import com.tribyte.component.ItemEvent;
+import com.tribyte.connection.UserSession;
 import com.tribyte.model.ModelEventStorage;
 import java.awt.*;
 import java.awt.event.*;
@@ -19,12 +20,14 @@ public class FormAttendance extends JPanel {
     private JTextField searchField;
     private String currentOrganizer;
     private int currentUserID; 
+    private String role;
 
     public void addEvent(ActionListener event) {
         this.event = event;
     }
 
     public FormAttendance(String role, int userID) {
+        this.role = role;
         this.currentUserID = userID;
         initComponents();
         setOpaque(false);
@@ -54,7 +57,7 @@ public class FormAttendance extends JPanel {
             }
         });
 
-        setLayout(new MigLayout("fill, wrap 1, insets 12", "[grow, fill]", "[]0[]12[fill, grow]"));
+        setLayout(new MigLayout("fillx, wrap 1, insets 12", "[grow, fill]", "[]0[]12[grow, fill]"));
         this.removeAll();
 
         JPanel titlePanel = new JPanel(new MigLayout("insets 0", "[]5[]", "[]"));
@@ -81,7 +84,7 @@ public class FormAttendance extends JPanel {
         table1.getColumnModel().getColumn(0).setCellRenderer(new ViewRenderer());
         table1.getColumnModel().getColumn(0).setCellEditor(new ViewEditor());
 
-        table1.setRowHeight(120);
+        table1.setRowHeight(180);
         table1.setShowGrid(false);
         table1.setIntercellSpacing(new Dimension(0, 15));
 
@@ -110,11 +113,18 @@ public class FormAttendance extends JPanel {
         String searchText = searchField.getText().toLowerCase();
 
         for (ModelEvents ev : ModelEventStorage.eventList) {
-            boolean isMine = (ev.getOwnerID() == currentUserID);
             boolean matchesSearch = ev.getName().toLowerCase().contains(searchText);
 
-            if (isMine && matchesSearch) {
-                model.addRow(new Object[]{ev});
+            if ("Registrant".equals(this.role)) {
+                if (ev.isJoined() && matchesSearch) {
+                    model.addRow(new Object[]{ev});
+                }
+            } else {
+                // Admin/Staff POV
+                boolean isMine = (ev.getOwnerID() == currentUserID);
+                if (isMine && matchesSearch) {
+                    model.addRow(new Object[]{ev});
+                }
             }
         }
     }
@@ -126,12 +136,16 @@ public class FormAttendance extends JPanel {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             ItemEvent item = (ItemEvent) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-            item.getLbJoined().setVisible(false);
-            item.getLbLeft().setVisible(false);
-
-            item.getBtnJoin().setText("VIEW");
-            item.getBtnJoin().setVisible(true);
-
+            if ("Registrant".equals(role)) {
+                item.getLbJoined().setVisible(true);
+                item.getLbLeft().setVisible(true);
+                item.getBtnJoin().setVisible(false);
+            } else {
+                item.getLbJoined().setVisible(false);
+                item.getLbLeft().setVisible(false);
+                item.getBtnJoin().setVisible(true);
+                item.getBtnJoin().setText("VIEW");
+            }
             return item;
         }
     }
@@ -142,24 +156,30 @@ public class FormAttendance extends JPanel {
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
             ItemEvent item = (ItemEvent) super.getTableCellEditorComponent(table, value, isSelected, row, column);
 
-            item.getLbJoined().setVisible(false);
-            item.getLbLeft().setVisible(false);
+            if ("Registrant".equals(role)) {
+                item.getLbJoined().setVisible(true);
+                item.getLbLeft().setVisible(true);
+                item.getBtnJoin().setVisible(false);
+                item.getBtnJoin().setEnabled(false);
+            } else {
+                item.getLbJoined().setVisible(false);
+                item.getLbLeft().setVisible(false);
+                item.getBtnJoin().setVisible(true);
+                item.getBtnJoin().setEnabled(true);
+                item.getBtnJoin().setText("VIEW");
 
-            item.getBtnJoin().setVisible(true);
-            item.getBtnJoin().setEnabled(true);
-            item.getBtnJoin().setText("VIEW");
-
-            for (ActionListener al : item.getBtnJoin().getActionListeners()) {
-                item.getBtnJoin().removeActionListener(al);
-            }
-
-            item.getBtnJoin().addActionListener(e -> {
-                ModelEvents data = (ModelEvents) value;
-                stopCellEditing();
-                if (event != null) {
-                    event.actionPerformed(new ActionEvent(data, ActionEvent.ACTION_PERFORMED, "VIEW_ATTENDANCE"));
+                for (ActionListener al : item.getBtnJoin().getActionListeners()) {
+                    item.getBtnJoin().removeActionListener(al);
                 }
-            });
+
+                item.getBtnJoin().addActionListener(e -> {
+                    ModelEvents data = (ModelEvents) value;
+                    stopCellEditing();
+                    if (event != null) {
+                        event.actionPerformed(new ActionEvent(data, ActionEvent.ACTION_PERFORMED, "VIEW_ATTENDANCE"));
+                    }
+                });
+            }
             return item;
         }
     }

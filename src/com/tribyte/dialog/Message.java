@@ -91,17 +91,31 @@ public class Message extends JDialog {
         txt.setText(message);
         txtsub.setText(submessage);
         pack();
+
         if (title.toLowerCase().contains("updat")) {
             cmdConfim.setText("Update Event");
-            cmdConfim.setBackground(new Color(4, 149, 22)); 
+            cmdConfim.setBackground(new Color(4, 149, 22));
             lbTitle.setForeground(new Color(4, 149, 22));
             lbIcon.setIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/sync.png")));
-        } else {
+        } 
+        else if (title.toLowerCase().contains("denied") || title.toLowerCase().contains("restricted")) {
+            cmdConfim.setText("Confirm");
+            cmdConfim.setBackground(new Color(150, 150, 150)); 
+            lbTitle.setForeground(new Color(250, 82, 82)); 
+            lbIcon.setIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/caution.png")));
+        } 
+        else if (title.toLowerCase().contains("delet") || title.toLowerCase().contains("removal")) {
             cmdConfim.setText("Yes, Delete Event");
-            cmdConfim.setBackground(new Color(250, 82, 82)); 
+            cmdConfim.setBackground(new Color(250, 82, 82)); // Red
             lbTitle.setForeground(new Color(250, 82, 82));
             lbIcon.setIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/caution.png")));
+        } 
+        else {
+            cmdConfim.setText("Confirm");
+            cmdConfim.setBackground(new Color(4, 149, 22));
+            lbTitle.setForeground(new Color(4, 149, 22));
         }
+
         setLocationRelativeTo(fram);
         startAnimator(true);
         setVisible(true);

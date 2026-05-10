@@ -18,6 +18,7 @@ public class ModelEvents {
     private String professor;
     private String accessibility;
     private String eventCode;
+    private boolean joined;
 
     public ModelEvents(int eventID, int ownerID, String name, String date, String venue, int filledSlots, int maxSlots, String status, String joinedTime, String leftTime, String professor, String accessibility, String eventCode) {
         this.eventID = eventID;
@@ -32,14 +33,12 @@ public class ModelEvents {
         this.leftTime = leftTime;
         this.professor = professor;
         this.accessibility = accessibility;
-        this.eventID = eventID;
-        this.eventCode = eventCode;
+        this.eventCode = eventCode; // Fixed this line
     }
 
     public ModelEvents() {
     }
 
-    // ID Getters
     public int getEventID() {
         return eventID;
     }
@@ -48,7 +47,6 @@ public class ModelEvents {
         return ownerID;
     }
 
-    // Text Getters & Setters
     public String getName() {
         return name;
     }
@@ -93,7 +91,19 @@ public class ModelEvents {
     public String getEventCode() {
         return eventCode;
     }
+    
+    public boolean isJoined() {
+        return joined;
+    }
 
+    public void setJoined(boolean joined) {
+        this.joined = joined;
+    }
+
+    public boolean isUserJoined(int userId) {
+        return this.joined;
+    }
+    
     //Table in FormHome
     public Object[] toRowTable(EventAction event) {
         String slotDisplay = filledSlots + " / " + maxSlots;

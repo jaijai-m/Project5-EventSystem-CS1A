@@ -7,14 +7,19 @@ import java.awt.event.ActionListener;
 
 public class Action extends javax.swing.JPanel {
 
-    public Action(ModelAction data) {
+    public Action(ModelAction data, boolean showEdit, boolean showDelete) {
         initComponents();
+
+        btnEdit.setVisible(showEdit);
+        btnDelete.setVisible(showDelete);
+
         btnEdit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 data.getEvent().update(data.getEvents());
             }
         });
+
         btnDelete.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -23,9 +28,13 @@ public class Action extends javax.swing.JPanel {
         });
     }
 
+    public Action(ModelAction data) {
+        this(data, true, true);
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g); 
+        super.paintComponent(g);
         g.setColor(new Color(203, 230, 230));
         g.drawLine(0, getHeight() - 1, getWidth(), getHeight() - 1);
     }
@@ -37,6 +46,8 @@ public class Action extends javax.swing.JPanel {
 
         btnEdit = new com.tribyte.swing.ButtonDBoard();
         btnDelete = new com.tribyte.swing.ButtonDBoard();
+
+        setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/tribyte/icon/edit.png"))); // NOI18N
         btnEdit.setPreferredSize(new java.awt.Dimension(30, 30));

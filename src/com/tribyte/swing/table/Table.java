@@ -23,8 +23,10 @@ public class Table extends JTable{
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean bln, boolean bln1, int i, int i1) {
                 TableHeader header = new TableHeader(value + "");
-                if(i1 == 4) {
-                    header.setHorizontalAlignment(JLabel.CENTER);
+                if (i1 == 6) {
+                    header.setHorizontalAlignment(JLabel.CENTER); 
+                } else {
+                    header.setHorizontalAlignment(JLabel.LEFT);  
                 }
                 return header;
             }
@@ -35,7 +37,10 @@ public class Table extends JTable{
                 
                 if (value instanceof ModelAction) {
                     ModelAction data = (ModelAction) value;
-                    Action action = new Action(data); 
+                    boolean isAttendanceList = (data.getEvents() == null);
+
+                    Action action = new Action(data, !isAttendanceList, true);
+
                     if (isSelected) {
                         action.setBackground(new Color(240, 248, 240));
                     } else {
@@ -43,7 +48,6 @@ public class Table extends JTable{
                     }
                     return action;
                 } else {
-                    
                     Component com = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                     com.setForeground(new Color(102, 102, 102));
                     setBorder(noFocusBorder);
@@ -58,12 +62,12 @@ public class Table extends JTable{
         });
     }
     
+    @Override
     public TableCellEditor getCellEditor(int row, int col) {
-        if(col == 4) {
+        if (col == 4 || col == 5) {
             return new TableCellAction();
-        }else {
-            return super.getCellEditor(row, col);
         }
+        return super.getCellEditor(row, col);
     }
     
     public void addRow(Object[]row) {

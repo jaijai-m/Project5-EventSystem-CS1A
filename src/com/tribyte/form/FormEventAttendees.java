@@ -1,11 +1,17 @@
 package com.tribyte.form;
 
+import com.tribyte.connection.ConnectDatabase;
+import com.tribyte.dialog.Message;
+import com.tribyte.model.ModelAttendance;
 import com.tribyte.model.ModelEvents;
+import com.tribyte.swing.ButtonDBoard;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.util.EventObject;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 import net.miginfocom.swing.MigLayout;
 
 public class FormEventAttendees extends JPanel {
@@ -42,7 +48,7 @@ public class FormEventAttendees extends JPanel {
 
         panelRound1.setLayout(new BorderLayout());
 
-        JLabel lbTableTitle = new JLabel("ATTENDANCE LIST - " + selectedEvent.getDate());
+        JLabel lbTableTitle = new JLabel("ATTENDANCE: " + selectedEvent.getName() + " (" + selectedEvent.getDate() + ")");
         lbTableTitle.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lbTableTitle.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 0));
 
@@ -63,28 +69,106 @@ public class FormEventAttendees extends JPanel {
 
         table1.setModel(new DefaultTableModel(
                 new Object[][]{},
-                new String[]{
-                    "Student ID", "Full Name", "Time In", "Time Out", "Status"
-                }
-        ) {
+                new String[]{"Full Name", "Email", "Registered At", "Status", "Action"}) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return column == 4;
             }
         });
 
-        table1.setCellSelectionEnabled(false); 
-        table1.setColumnSelectionAllowed(false); 
-        table1.setFocusable(false);
+        table1.setRowHeight(40);
 
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table1.getColumnModel().getColumn(4).setCellRenderer(new ActionRenderer());
+        table1.getColumnModel().getColumn(4).setCellEditor(new ActionEditor());
+
+        table1.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         
         DefaultTableModel model = (DefaultTableModel) table1.getModel();
-        model.addRow(new Object[]{"2024-0001", "Kenneth Bautista", "08:15 AM", "03:45 PM", "Late"});
-        model.addRow(new Object[]{"2024-0002", "Jane Doe", "08:30 AM", "---", "No Timeout"});
+        model.setRowCount(0);
+
+        ConnectDatabase db = new ConnectDatabase();
+        java.util.List<com.tribyte.model.ModelAttendance> list = db.getAttendanceList(selectedEvent.getEventID());
+
+        for (ModelAttendance att : list) {
+            model.addRow(new Object[]{
+                att.getName(), 
+                att.getEmail(),
+                att.getRegisteredAt(), 
+                att.getStatus(),
+                null 
+            });
+        }
+    }
+    
+    private boolean showConfirm(String title, String message, String subMessage) {
+        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        Message obj = new Message(frame);
+        obj.showMessage(title, message, subMessage);
+        return obj.getMessageType() == Message.MessageType.CONFIRM;
     }
 
+    private class ActionRenderer extends DefaultTableCellRenderer {
+
+        private ButtonDBoard btn = new ButtonDBoard();
+
+        public ActionRenderer() {
+            btn.setIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/delete.png")));
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            if (isSelected) {
+                btn.setBackground(table.getSelectionBackground());
+            } else {
+                btn.setBackground(table.getBackground());
+            }
+            return btn;
+        }
+    }
+
+    private class ActionEditor extends AbstractCellEditor implements TableCellEditor {
+
+        private ButtonDBoard btn = new ButtonDBoard();
+        private int row;
+
+        public ActionEditor() {
+            btn.setIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/delete.png")));
+            btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+            btn.addActionListener(e -> {
+                stopCellEditing();
+
+                String studentName = table1.getValueAt(row, 0).toString();
+                String studentEmail = table1.getValueAt(row, 1).toString();
+
+                if (showConfirm("Confirm Removal", "Remove " + studentName + "?", "This will unregister the student from the event.")) {
+                    ConnectDatabase db = new ConnectDatabase();
+                    if (db.unregisterStudent(studentEmail, selectedEvent.getEventID())) {
+                        ((DefaultTableModel) table1.getModel()).removeRow(row);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Failed to delete from database.");
+                    }
+                }
+            });
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            this.row = row; 
+            return btn;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return null;
+        }
+
+        @Override
+        public boolean isCellEditable(EventObject e) {
+            return true;
+        }
+    }
+    
     public void addBackEvent(ActionListener event) {
         this.backEvent = event;
     }
@@ -108,20 +192,15 @@ public class FormEventAttendees extends JPanel {
 
         table1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "Event Name", "Date", "Venue", "Slots", "Action"
+                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6"
             }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
+        ));
         jScrollPane1.setViewportView(table1);
 
         javax.swing.GroupLayout panelRound1Layout = new javax.swing.GroupLayout(panelRound1);
@@ -129,13 +208,13 @@ public class FormEventAttendees extends JPanel {
         panelRound1Layout.setHorizontalGroup(
             panelRound1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelRound1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1206, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(panelRound1Layout.createSequentialGroup()
                 .addGap(14, 14, 14)
                 .addComponent(jLabel2)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(panelRound1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1206, Short.MAX_VALUE)
+                .addContainerGap())
         );
         panelRound1Layout.setVerticalGroup(
             panelRound1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

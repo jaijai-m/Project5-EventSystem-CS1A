@@ -33,53 +33,53 @@ import net.miginfocom.swing.MigLayout;
         public FormEvents(String role) {
             initComponents();
             setOpaque(false);
-            setLayout(new MigLayout("fill, wrap 2, insets 12", "[grow, fill]15[grow, fill]", "[]0[]12[]20[fill, grow]"));
+
+            // Use wrap 2 as base layout
+            setLayout(new MigLayout("fill, wrap 2, insets 12", "[grow, fill]15[grow, fill]", "[]0[]12[]20[grow, fill]"));
             this.removeAll();
 
+            // 1. Title Section
             JPanel titlePanel = new JPanel(new MigLayout("insets 0", "[]5[]", "[]"));
             titlePanel.setOpaque(false);
             titlePanel.add(txt);
             titlePanel.add(lbImage);
-            this.add(titlePanel, "span 3, wrap");
-            this.add(txtSub, "span 3, wrap 20");
+            this.add(titlePanel, "span 2, wrap"); // span 2 matches wrap 2
+            this.add(txtSub, "span 2, wrap 20");
 
-            Font buttonFont = new Font("Segoe UI", Font.BOLD, 28);
+            // 2. Button Logic: Only add buttons if NOT a Registrant/Student
+            if (!"Registrant".equals(role)) {
+                Font buttonFont = new Font("Segoe UI", Font.BOLD, 28);
 
-            if ("Student".equals(role)) {
-                styleButton(btn1, "Edit Profile", buttonFont);
-                styleButton(btn2, "My Registrations", buttonFont);
-            } else if ("Admin".equals(role)) {
-                styleButton(btn1, "Create New Event", buttonFont);
-                styleButton(btn2, "Edit Existing Events", buttonFont);
-            } else {
-                styleButton(btn1, "Create New Event", buttonFont);
-                styleButton(btn2, "Manage Events", buttonFont);
+                // Setup text based on role
+                if ("Admin".equals(role)) {
+                    styleButton(btn1, "Create New Event", buttonFont);
+                    styleButton(btn2, "Edit Existing Events", buttonFont);
+                } else {
+                    styleButton(btn1, "Create New Event", buttonFont);
+                    styleButton(btn2, "Manage Events", buttonFont);
+                }
+
+                // Add the buttons to the UI
+                add(btn1, "grow, h 150!");
+                add(btn2, "grow, h 150!");
+
+                // Button Listeners
+                btn1.addActionListener(e -> {
+                    if (event != null) {
+                        event.actionPerformed(new ActionEvent(btn1, ActionEvent.ACTION_PERFORMED, btn1.getText()));
+                    }
+                });
+                btn2.addActionListener(e -> {
+                    if (event != null) {
+                        event.actionPerformed(new ActionEvent(btn2, ActionEvent.ACTION_PERFORMED, btn2.getText()));
+                    }
+                });
             }
 
-            add(btn1, "grow, h 150!");
-            add(btn2, "grow, h 150!");
-            this.add(panelRound1, "span 2, grow");
+            this.add(panelRound1, "span 2, grow, pushy");
+
             initSearchUI();
             initTableData();
-            
-            btn1.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent evt) {
-                    if (event != null) {
-                        event.actionPerformed(new ActionEvent(btn1,
-                                ActionEvent.ACTION_PERFORMED, "Create New Event"));
-                    } else {
-                        System.out.println("DEBUG: Event listener is NULL!");
-                    }
-                }
-            });
-
-            btn2.addActionListener(e -> {
-                if (event != null) {
-                    event.actionPerformed(new ActionEvent(btn2,
-                            ActionEvent.ACTION_PERFORMED, btn2.getText()));
-                }
-            });
         }
         
         private void initSearchUI() {
@@ -122,10 +122,15 @@ import net.miginfocom.swing.MigLayout;
             panelRound1.setLayout(new BorderLayout());
             panelRound1.add(header, BorderLayout.NORTH);
             panelRound1.add(jScrollPane1, BorderLayout.CENTER);
+            
+            jScrollPane1.setPreferredSize(new Dimension(jScrollPane1.getPreferredSize().width, 800));
         }
         
         private void initTableData() {
+            ModelEventStorage.loadFromDatabase();
+
             table1.fixTable(jScrollPane1);
+
             table1.setModel(new DefaultTableModel(new Object[][]{}, new String[]{""}));
 
             table1.getColumnModel().getColumn(0).setCellRenderer(new EventCellRenderer());
@@ -136,7 +141,7 @@ import net.miginfocom.swing.MigLayout;
             table1.setShowGrid(false);
             table1.setIntercellSpacing(new Dimension(0, 15));
 
-            updateTable(); 
+            updateTable();
         }
 
         private void updateTable() {
@@ -260,13 +265,12 @@ import net.miginfocom.swing.MigLayout;
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(panelRound1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(panelRound1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(txt)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lbImage)
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addContainerGap())))
+                                .addComponent(lbImage)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -283,8 +287,8 @@ import net.miginfocom.swing.MigLayout;
                 .addComponent(txtSub)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, Short.MAX_VALUE)
-                .addComponent(panelRound1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(panelRound1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents

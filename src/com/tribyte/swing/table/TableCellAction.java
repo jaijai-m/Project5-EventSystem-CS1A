@@ -11,20 +11,25 @@ public class TableCellAction extends DefaultCellEditor{
     
     public TableCellAction() {
         super (new JCheckBox());
+        setClickCountToStart(1);
     }
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        data = (ModelAction) value;
-        Action cell = new Action(data);
-        cell.setBackground(new Color(240, 248, 240));
-        return cell;
+        if (value instanceof ModelAction) {
+            this.data = (ModelAction) value;
+
+            boolean isAttendanceList = (data.getEvents() == null);
+            Action cell = new Action(data, !isAttendanceList, true);
+            cell.setBackground(new Color(240, 248, 240));
+
+            return cell;
+        }
+        return null;
     }
 
     @Override
     public Object getCellEditorValue() {
-        return data; 
+        return data;
     }
-    
-    
 }
