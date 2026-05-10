@@ -9,7 +9,7 @@
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
-SET time_zone = "+00:00";
+SET time_zone = "+08:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -136,7 +136,6 @@ ALTER TABLE `events`
 --
 ALTER TABLE `registrations`
   ADD PRIMARY KEY (`registration_id`),
-  ADD UNIQUE KEY `unique_event_user` (`event_id`,`user_id`),
   ADD UNIQUE KEY `unique_user_event` (`user_id`,`event_id`),
   ADD KEY `fk_user_id` (`user_id`);
 
