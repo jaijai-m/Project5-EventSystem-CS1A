@@ -10,7 +10,7 @@ public class ConnectDatabase {
 
     public static Connection conn() {
         try {
-            String url = "jdbc:mysql://localhost:3306/db_event_management";
+            String url = "jdbc:mysql://localhost:3306/db_event_management2";
             String user = "root";
             String password = "";
             return DriverManager.getConnection(url, user, password);
