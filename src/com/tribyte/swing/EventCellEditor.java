@@ -48,6 +48,19 @@ public class EventCellEditor extends AbstractCellEditor implements TableCellEdit
 
                 item.getBtnJoin().addActionListener(e -> {
                     JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(table);
+                    
+                     if (currentData.getStatus().equalsIgnoreCase("Lock") || 
+                         currentData.getFilledSlots() >= currentData.getMaxSlots()) {
+
+                         JOptionPane.showMessageDialog(frame, 
+                             "Sorry! This event has just reached its maximum capacity.", 
+                             "Event Full", JOptionPane.WARNING_MESSAGE);
+
+                         ModelEventStorage.loadFromDatabase();
+                         stopCellEditing();
+                         table.repaint();
+                         return;
+                     }
 
                     if (currentData.getAccessibility().equalsIgnoreCase("Private")) {
                         MessageEventCode msg = new MessageEventCode(frame);

@@ -81,6 +81,8 @@ public class ConnectDatabase {
     public boolean registerForEvent(int userId, int eventId) {
         String insertSql = "INSERT INTO registrations (user_id, event_id) VALUES (?, ?)";
         String updateSql = "UPDATE events SET filled_slots = filled_slots + 1 WHERE event_id = ?";
+        // Add here the auto-lock logic when filled_slots meets max slots
+        String autoLockSql = "UPDATE events SET status = 'Lock' WHERE event_id = ? AND filled_slots >= max_slots";
 
         try (Connection con = conn()) {
             con.setAutoCommit(false); 
@@ -95,12 +97,17 @@ public class ConnectDatabase {
                 psUpdate.setInt(1, eventId);
                 psUpdate.executeUpdate();
             }
+            
+            try (PreparedStatement psLock= con.prepareStatement(autoLockSql)) {
+                psLock.setInt(1,eventId);
+                psLock.executeUpdate();
+            }
 
             con.commit(); 
             return true;
 
         } catch (SQLException e) {
-            System.out.println("SQL Join Error: " + e.getMessage());
+            System.out.println("Registration Error: " + e.getMessage());
             return false;
         }
     }

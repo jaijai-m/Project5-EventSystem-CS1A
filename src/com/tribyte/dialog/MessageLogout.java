@@ -53,7 +53,7 @@ public class MessageLogout extends JDialog {
             public void timingEvent(float fraction) {
                 float f = show ? fraction : 1f - fraction;
                 glass.setAlpha(f - f * 0.3f);
-                setOpacity(f);
+                
             }
 
             @Override
@@ -67,7 +67,7 @@ public class MessageLogout extends JDialog {
         animator.setResolution(5);
         animator.setAcceleration(.5f);
         animator.setDeceleration(.5f);
-        setOpacity(0f);
+        
         glass = new Glass();
     }
 

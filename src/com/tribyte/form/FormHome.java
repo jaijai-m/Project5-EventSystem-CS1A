@@ -1,6 +1,7 @@
 package com.tribyte.form;
 
 import com.tribyte.connection.ConnectDatabase;
+import com.tribyte.connection.UserSession;
 import com.tribyte.dialog.Message;
 import com.tribyte.model.ModelCard;
 import com.tribyte.model.ModelEventStorage;
@@ -71,6 +72,7 @@ public class FormHome extends JPanel {
     }
 
     private void initData() {
+        ModelEventStorage.loadFromDatabase();
         initCardData();
         initTableData();
     }
@@ -84,10 +86,8 @@ public class FormHome extends JPanel {
 
                         ConnectDatabase db = new ConnectDatabase();
                         if (db.deleteEvent(events.getEventID())) {
-
-                            ModelEventStorage.loadFromDatabase();
-
-                            initTableData();
+                            
+                            initData();
 
                             System.out.println("Event deleted from DB successfully.");
                         } else {

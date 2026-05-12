@@ -10,6 +10,20 @@
             <file>file:/home/jaijaimnglndn07/NetBeansProjects/Project5-EventSystem-CS1A/src/com/tribyte/form/FormCreateEvent.java</file>
             <file>file:/home/jaijaimnglndn07/NetBeansProjects/Project5-EventSystem-CS1A/src/com/tribyte/connection/ConnectDatabase.java</file>
             <file>file:/home/jaijaimnglndn07/NetBeansProjects/Project5-EventSystem-CS1A/src/com/tribyte/component/PanelLoginAndRegister.java</file>
+            <file>file:/home/jaijaimnglndn07/NetBeansProjects/Project5-EventSystem-CS1A/src/com/tribyte/connection/UserSession.java</file>
+            <file>file:/home/jaijaimnglndn07/NetBeansProjects/Project5-EventSystem-CS1A/src/com/tribyte/form/FormEditExistingEvents.java</file>
+            <file>file:/home/jaijaimnglndn07/NetBeansProjects/Project5-EventSystem-CS1A/src/com/tribyte/swing/table/Action.java</file>
+            <file>file:/home/jaijaimnglndn07/NetBeansProjects/Project5-EventSystem-CS1A/src/com/tribyte/dialog/MessageLogout.java</file>
+            <file>file:/home/jaijaimnglndn07/NetBeansProjects/Project5-EventSystem-CS1A/src/com/tribyte/dialog/MessageEventCode.java</file>
+            <file>file:/home/jaijaimnglndn07/NetBeansProjects/Project5-EventSystem-CS1A/src/com/tribyte/model/ModelCard.java</file>
+            <file>file:/home/jaijaimnglndn07/NetBeansProjects/Project5-EventSystem-CS1A/src/com/tribyte/model/ModelAttendance.java</file>
+            <file>file:/home/jaijaimnglndn07/NetBeansProjects/Project5-EventSystem-CS1A/src/com/tribyte/form/FormEvents.java</file>
+            <file>file:/home/jaijaimnglndn07/NetBeansProjects/Project5-EventSystem-CS1A/src/com/tribyte/dialog/Message.java</file>
+            <file>file:/home/jaijaimnglndn07/NetBeansProjects/Project5-EventSystem-CS1A/src/com/tribyte/dialog/Background.java</file>
+            <file>file:/home/jaijaimnglndn07/NetBeansProjects/Project5-EventSystem-CS1A/src/com/tribyte/model/ModelEventStorage.java</file>
+            <file>file:/home/jaijaimnglndn07/NetBeansProjects/Project5-EventSystem-CS1A/src/com/tribyte/swing/table/EventAction.java</file>
+            <file>file:/home/jaijaimnglndn07/NetBeansProjects/Project5-EventSystem-CS1A/src/com/tribyte/model/ModelEvents.java</file>
+            <file>file:/home/jaijaimnglndn07/NetBeansProjects/Project5-EventSystem-CS1A/src/com/tribyte/swing/EventCellEditor.java</file>
         </group>
     </open-files>
 </project-private>
