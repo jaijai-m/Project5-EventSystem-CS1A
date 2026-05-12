@@ -1,3 +1,5 @@
+//CREDIT to DJ Ra Ven 
+
 package com.tribyte.dashboard.main;
 
 import com.tribyte.component.Header;
@@ -19,6 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import net.miginfocom.swing.MigLayout;
@@ -26,162 +29,165 @@ import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
 
-public class DashboardMain extends JFrame {
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(DashboardMain.class.getName());
+    public class DashboardMain extends JFrame {
 
-    private String userRole = "Admin"; 
-    private int userId = 101;
-    private Menu menu = new Menu();
-    private MigLayout layout;
-    private Animator animator;  
-    private boolean menuShow = true;
-    private Header header;
-    private MainForm main;
-    
-    public DashboardMain(String role, int id) {
-        this.userRole = role;
-        this.userId = id;
-        initComponents();
-        init();
-    }
-    
-    private void init() {
-        layout = new MigLayout("fill, insets 0, gap 0", "0[]0[fill, grow]0", "0[fill]0");
-        body.setLayout(layout);
+        private static final Logger logger = Logger.getLogger(DashboardMain.class.getName());
 
-        header = new Header();
-        main = new MainForm();
-        main.setOpaque(false);
-        main.setLayout(new BorderLayout());
+        private String userRole = "Admin";
+        private int userId = 101;
+        private Menu menu = new Menu();
+        private MigLayout layout;
+        private Animator animator;
+        private boolean menuShow = true;
+        private Header header;
+        private MainForm main;
 
-        menu.addEventLogout(e -> {
-            MessageLogout msg = new MessageLogout(this);
-            msg.showMessage("Logout Confirmation", "Are you sure you want to log out?");
 
-            if (msg.getMessageType() == MessageLogout.MessageType.CONFIRM) {
-                this.dispose();
-            }
-        });
+        public DashboardMain(String role, int id) {
+            this.userRole = role;
+            this.userId = id;
+            initComponents(); 
+            init();
+        }
 
-        menu.setEvent(new EventMenuSelected() {
-            @Override
-            public void selected(int menuIndex) {
-                if (menuIndex == 0) {
-                    ModelEventStorage.loadFromDatabase();
+        private void init() {
+            layout = new MigLayout("fill, insets 0, gap 0", "0[]0[fill, grow]0", "0[fill]0");
+            body.setLayout(layout);
 
-                    FormHome home = new FormHome(userRole, userId);
+            header = new Header();
+            main = new MainForm();
+            main.setOpaque(false);
+            main.setLayout(new BorderLayout());
 
-                    home.addEvent(e -> {
-                        if ("EDIT_EVENT".equals(e.getActionCommand())) {
-                            ModelEvents data = (ModelEvents) e.getSource();
-                            FormEditingEvent editingForm = new FormEditingEvent(data);
-                            editingForm.addBackEvent(back -> selected(0));
-                            showForm(editingForm);
-                        }
-                    });
+            menu.addEventLogout(e -> {
+                MessageLogout msg = new MessageLogout(this);
+                msg.showMessage("Logout Confirmation", "Are you sure you want to log out?");
 
-                    showForm(home);
+                if (msg.getMessageType() == MessageLogout.MessageType.CONFIRM) {
+                    this.dispose();
                 }
-                else if (menuIndex == 1) {
-                    FormEvents fEvents = new FormEvents(userRole);
+            });
 
-                    fEvents.addEvent(e -> {
-                        String command = e.getActionCommand();
+            menu.setEvent(new EventMenuSelected() {
+                @Override
+                public void selected(int menuIndex) {
+                    if (menuIndex == 0) {
+                        loadDashboardHome();
+                    } else if (menuIndex == 1) {
+                        FormEvents fEvents = new FormEvents(userRole);
 
-                        if ("Create New Event".equals(command)) {
-                            FormCreateEvent createForm = new FormCreateEvent();
-                            createForm.addBackEvent(ev -> selected(1));
-                            showForm(createForm);
-                        } else if ("Edit Existing Events".equals(command) || "Manage Events".equals(command)) {
-                            FormEditExistingEvents editForm = new FormEditExistingEvents(userRole, userId);
+                        fEvents.addEvent(e -> {
+                            String command = e.getActionCommand();
 
-                            editForm.addEvent(ev -> {
-                                if ("EDIT_EVENT".equals(ev.getActionCommand())) {
-                                    ModelEvents data = (ModelEvents) ev.getSource();
-                                    FormEditingEvent editingForm = new FormEditingEvent(data);
-                                    editingForm.addBackEvent(back -> selected(1));
-                                    showForm(editingForm);
-                                }
-                            });
+                            if ("Create New Event".equals(command)) {
+                                FormCreateEvent createForm = new FormCreateEvent();
+                                createForm.addBackEvent(ev -> selected(1));
+                                showForm(createForm);
+                            } else if ("Edit Existing Events".equals(command) || "Manage Events".equals(command)) {
+                                FormEditExistingEvents editForm = new FormEditExistingEvents(userRole, userId);
 
-                            editForm.addBackEvent(back -> selected(1));
-                            showForm(editForm);
-                        }
-                    });
-                    showForm(fEvents);
-                } else if (menuIndex == 2) { 
-                    FormAttendance attendanceSelector = new FormAttendance(userRole, userId);
+                                editForm.addEvent(ev -> {
+                                    if ("EDIT_EVENT".equals(ev.getActionCommand())) {
+                                        ModelEvents data = (ModelEvents) ev.getSource();
+                                        FormEditingEvent editingForm = new FormEditingEvent(data);
+                                        editingForm.addBackEvent(back -> selected(1));
+                                        showForm(editingForm);
+                                    }
+                                });
 
-                    attendanceSelector.addEvent(ev -> {
-                        if ("VIEW_ATTENDANCE".equals(ev.getActionCommand())) {
-                            ModelEvents data = (ModelEvents) ev.getSource();
-                            FormEventAttendees attendeesForm = new FormEventAttendees(data);
+                                editForm.addBackEvent(back -> selected(1));
+                                showForm(editForm);
+                            }
+                        });
+                        showForm(fEvents);
+                    } else if (menuIndex == 2) {
+                        FormAttendance attendanceSelector = new FormAttendance(userRole, userId);
 
-                            attendeesForm.addBackEvent(back -> selected(2));
+                        attendanceSelector.addEvent(ev -> {
+                            if ("VIEW_ATTENDANCE".equals(ev.getActionCommand())) {
+                                ModelEvents data = (ModelEvents) ev.getSource();
+                                FormEventAttendees attendeesForm = new FormEventAttendees(data);
 
-                            showForm(attendeesForm);
+                                attendeesForm.addBackEvent(back -> selected(2));
 
-                        }
-                    });
+                                showForm(attendeesForm);
+                            }
+                        });
 
-                    showForm(attendanceSelector);
+                        showForm(attendanceSelector);
+                    }
                 }
-            } 
-        }); 
+            });
 
-        menu.addMenu(new ModelMenu("Dashboard", new ImageIcon(getClass().getResource("/com/tribyte/icon/dboard.png"))));
-        menu.addMenu(new ModelMenu("Events", new ImageIcon(getClass().getResource("/com/tribyte/icon/event.png"))));
-        menu.addMenu(new ModelMenu("Attendance", new ImageIcon(getClass().getResource("/com/tribyte/icon/attendance.png"))));
+            menu.addMenu(new ModelMenu("Dashboard", new ImageIcon(getClass().getResource("/com/tribyte/icon/dboard.png"))));
+            menu.addMenu(new ModelMenu("Events", new ImageIcon(getClass().getResource("/com/tribyte/icon/event.png"))));
+            menu.addMenu(new ModelMenu("Attendance", new ImageIcon(getClass().getResource("/com/tribyte/icon/attendance.png"))));
 
-        body.add(menu, "w 230!, spany");
-        body.add(header, "h 50!, wrap");
-        body.add(main, "w 100%, h 100%");
-        
-        TimingTarget target = new TimingTargetAdapter() {
-            @Override
-            public void timingEvent(float fraction) {
-                double width;
-                if(menuShow) {
-                    width = 60 + (170 * (1f - fraction));
-                    menu.setAlpha(1f - fraction);
-                } else {
-                    width = 60 + (170 * fraction);
-                    menu.setAlpha(fraction);
+            body.add(menu, "w 230!, spany");
+            body.add(header, "h 50!, wrap");
+            body.add(main, "w 100%, h 100%");
+
+            TimingTarget target = new TimingTargetAdapter() {
+                @Override
+                public void timingEvent(float fraction) {
+                    double width;
+                    if (menuShow) {
+                        width = 60 + (170 * (1f - fraction));
+                        menu.setAlpha(1f - fraction);
+                    } else {
+                        width = 60 + (170 * fraction);
+                        menu.setAlpha(fraction);
+                    }
+                    layout.setComponentConstraints(menu, "w " + width + "!, spany2 ");
+                    menu.revalidate();
                 }
-                layout.setComponentConstraints(menu, "w " + width + "!, spany2 ");
-                menu.revalidate();
-            }
 
-            @Override
-            public void end() {
-                menuShow = !menuShow;
-            }
-            
-        };
-        animator = new Animator(500, target);
-        animator.setResolution(0);
-        animator.setAcceleration(0.5f);
-        animator.setDeceleration(0.5f);
-        header.addMenuEvent(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!animator.isRunning()) {
-                    animator.start();
+                @Override
+                public void end() {
+                    menuShow = !menuShow;
                 }
-            }
-        });
-        //Starting Form
-        main.showForm(new FormHome(userRole, userId));
-    }
+            };
+            animator = new Animator(500, target);
+            animator.setResolution(0);
+            animator.setAcceleration(0.5f);
+            animator.setDeceleration(0.5f);
+            header.addMenuEvent(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (!animator.isRunning()) {
+                        animator.start();
+                    }
+                }
+            });
 
-    private void showForm(Component com) {
-        main.removeAll();
-        main.add(com);
-        main.repaint();
-        main.revalidate();
-    }
-    
+            loadDashboardHome();
+        }
+
+        private void loadDashboardHome() {
+            ModelEventStorage.loadFromDatabase(userRole, userId);
+            FormHome home = new FormHome(userRole, userId);
+
+            home.addEvent(e -> {
+                if ("EDIT_EVENT".equals(e.getActionCommand())) {
+                    ModelEvents data = (ModelEvents) e.getSource();
+                    FormEditingEvent editingForm = new FormEditingEvent(data);
+
+                    editingForm.addBackEvent(back -> loadDashboardHome());
+
+                    showForm(editingForm);
+                }
+            });
+
+            showForm(home);
+        }
+
+        private void showForm(Component com) {
+            main.removeAll();
+            main.add(com);
+            main.repaint();
+            main.revalidate();
+        }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

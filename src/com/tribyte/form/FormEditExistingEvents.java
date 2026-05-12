@@ -4,6 +4,7 @@ import com.tribyte.model.ModelEvents;
 import com.tribyte.swing.EventCellEditor;
 import com.tribyte.swing.EventCellRenderer;
 import com.tribyte.component.ItemEvent;
+import com.tribyte.connection.UserSession;
 import com.tribyte.model.ModelEventStorage;
 import java.awt.*;
 import java.awt.event.*;
@@ -25,7 +26,10 @@ public class FormEditExistingEvents extends JPanel {
     }
 
     public FormEditExistingEvents(String role, int userID) {
-        ModelEventStorage.loadFromDatabase();
+        String sessionRole = UserSession.getInstance().getRole();
+        int sessionUserId = UserSession.getInstance().getUserId();
+
+        ModelEventStorage.loadFromDatabase(sessionRole, sessionUserId);
                 
         this.currentUserID = userID; 
         initComponents();
@@ -116,11 +120,13 @@ public class FormEditExistingEvents extends JPanel {
         model.setRowCount(0);
         String searchText = searchField.getText().toLowerCase();
 
+        String sessionRole = UserSession.getInstance().getRole();
+
         for (ModelEvents ev : ModelEventStorage.eventList) {
-            boolean isMine = (ev.getOwnerID() == currentUserID);
+            boolean isAllowed = "Staff".equalsIgnoreCase(sessionRole) || (ev.getOwnerID() == currentUserID);
             boolean matchesSearch = ev.getName().toLowerCase().contains(searchText);
 
-            if (isMine && matchesSearch) {
+            if (isAllowed && matchesSearch) {
                 model.addRow(new Object[]{ev});
             }
         }

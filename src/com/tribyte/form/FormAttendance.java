@@ -120,9 +120,9 @@ public class FormAttendance extends JPanel {
                     model.addRow(new Object[]{ev});
                 }
             } else {
-                // Admin/Staff POV
-                boolean isMine = (ev.getOwnerID() == currentUserID);
-                if (isMine && matchesSearch) {
+                boolean isAllowed = "Staff".equalsIgnoreCase(this.role) || (ev.getOwnerID() == currentUserID);
+
+                if (isAllowed && matchesSearch) {
                     model.addRow(new Object[]{ev});
                 }
             }

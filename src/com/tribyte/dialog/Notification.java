@@ -2,8 +2,6 @@ package com.tribyte.dialog;
 
 import java.awt.*;
 import javax.swing.*;
-import org.jdesktop.animation.timing.Animator;
-import org.jdesktop.animation.timing.TimingTargetAdapter;
 
   
 
@@ -16,15 +14,24 @@ import org.jdesktop.animation.timing.TimingTargetAdapter;
             this.parent = parent;
             this.message = message;
             setOpaque(false);
+
+            this.setLayout(null);
+
             int width = Math.max(200, message.length() * 10);
             setPreferredSize(new Dimension(width, 40));
             initComponents();
         }
 
         public void showNotification() {
-            int x = (parent.getWidth() - getPreferredSize().width) / 2;
-            int y = parent.getHeight() - 100;
-            setBounds(x, y, getPreferredSize().width, 40);
+            int width = getPreferredSize().width;
+
+            int sidebarWidth = 260;
+
+            int x = sidebarWidth + ((parent.getWidth() - sidebarWidth - width) / 2);
+
+            int y = 950;
+
+            setBounds(x, y, width, 40);
 
             parent.getLayeredPane().add(this, JLayeredPane.POPUP_LAYER);
 

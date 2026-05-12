@@ -5,9 +5,14 @@ import com.tribyte.dialog.Message;
 import com.tribyte.model.ModelAttendance;
 import com.tribyte.model.ModelEvents;
 import com.tribyte.swing.ButtonDBoard;
+import com.tribyte.swing.table.Table;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.EventObject;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -18,6 +23,10 @@ public class FormEventAttendees extends JPanel {
 
     private ModelEvents selectedEvent;
     private ActionListener backEvent;
+    private List<ModelAttendance> attendanceList;
+    private MouseAdapter statusToggleListener; 
+    private JTextField searchField;
+    
 
     public FormEventAttendees(ModelEvents data) {
         this.selectedEvent = data;
@@ -36,8 +45,8 @@ public class FormEventAttendees extends JPanel {
         JPanel titlePanel = new JPanel(new MigLayout("insets 0", "[]10[]5[]", "[]"));
         titlePanel.setOpaque(false);
 
-        btnBack.setBackground(new Color(242, 242, 242)); 
-        btnBack.setRoundness(15); 
+        btnBack.setBackground(new Color(242, 242, 242));
+        btnBack.setRoundness(15);
 
         titlePanel.add(btnBack);
         titlePanel.add(txt);
@@ -45,14 +54,50 @@ public class FormEventAttendees extends JPanel {
 
         this.add(titlePanel, "wrap, gapbottom -8");
 
-
         panelRound1.setLayout(new BorderLayout());
+
+        // --- NEW SEARCH BAR INITIALIZATION BLOCK ---
+        searchField = new JTextField();
+        searchField.setPreferredSize(new Dimension(250, 35));
+        searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        searchField.setForeground(new Color(50, 50, 50));
+        searchField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(4, 149, 22), 1, true),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+        searchField.setToolTipText("Search attendees by name or email...");
+
+        // Fire table filter redraw loops instantly as the admin types letters
+        searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                updateTableRows();
+            }
+
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                updateTableRows();
+            }
+
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                updateTableRows();
+            }
+        });
+
+        JPanel headerContainer = new JPanel(new BorderLayout());
+        headerContainer.setOpaque(false);
 
         JLabel lbTableTitle = new JLabel("ATTENDANCE: " + selectedEvent.getName() + " (" + selectedEvent.getDate() + ")");
         lbTableTitle.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lbTableTitle.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 0));
+        headerContainer.add(lbTableTitle, BorderLayout.WEST);
 
-        panelRound1.add(lbTableTitle, BorderLayout.NORTH);
+        JPanel searchWrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
+        searchWrapper.setOpaque(false);
+        searchWrapper.add(new JLabel("Search: "));
+        searchWrapper.add(searchField);
+        headerContainer.add(searchWrapper, BorderLayout.EAST);
+        // --- END OF SEARCH BAR INITIALIZATION BLOCK ---
+
+        panelRound1.add(headerContainer, BorderLayout.NORTH); // Changed from lbTableTitle to headerContainer
         panelRound1.add(jScrollPane1, BorderLayout.CENTER);
 
         this.add(panelRound1, "grow");
@@ -64,42 +109,78 @@ public class FormEventAttendees extends JPanel {
         });
     }
 
+    public interface AttendanceAction {
+
+        void delete(ModelAttendance attendance, int rowIndex);
+    }
+
     private void initTableData() {
         table1.fixTable(jScrollPane1);
 
         table1.setModel(new DefaultTableModel(
                 new Object[][]{},
-                new String[]{"Full Name", "Email", "Registered At", "Status", "Action"}) {
+                new String[]{"Full Name", "Email", "Time In", "Time Out", "Status", "Action"}) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 4;
+                return column == 5;
             }
         });
 
         table1.setRowHeight(40);
 
-        table1.getColumnModel().getColumn(4).setCellRenderer(new ActionRenderer());
-        table1.getColumnModel().getColumn(4).setCellEditor(new ActionEditor());
+        ConnectDatabase db = new ConnectDatabase();
+        attendanceList = db.getAttendanceList(selectedEvent.getEventID());
 
-        table1.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-        
+        AttendanceAction attendanceAction = new AttendanceAction() {
+            @Override
+            public void delete(ModelAttendance attendance, int rowIndex) {
+                if (showConfirm("Delete Attendee",
+                        "Are you sure you want to remove " + attendance.getName() + " from this event?",
+                        "This action is permanent.")) {
+                    if (db.unregisterStudent(attendance.getEmail(), selectedEvent.getEventID())) {
+                        SwingUtilities.invokeLater(() -> {
+                            attendanceList.remove(attendance); 
+                            updateTableRows(); 
+                        });
+                    }
+                }
+            }
+        };
+
+        table1.getColumnModel().getColumn(5).setCellRenderer(new ActionRenderer());
+        table1.getColumnModel().getColumn(5).setCellEditor(new ActionEditor(attendanceAction));
+
+        updateTableRows();
+    }
+
+    private void updateTableRows() {
         DefaultTableModel model = (DefaultTableModel) table1.getModel();
         model.setRowCount(0);
 
-        ConnectDatabase db = new ConnectDatabase();
-        java.util.List<com.tribyte.model.ModelAttendance> list = db.getAttendanceList(selectedEvent.getEventID());
+        String queryText = (searchField == null) ? "" : searchField.getText().toLowerCase().trim();
 
-        for (ModelAttendance att : list) {
-            model.addRow(new Object[]{
-                att.getName(), 
-                att.getEmail(),
-                att.getRegisteredAt(), 
-                att.getStatus(),
-                null 
-            });
+        for (int i = 0; i < attendanceList.size(); i++) {
+            ModelAttendance att = attendanceList.get(i);
+
+            boolean matchesName = att.getName().toLowerCase().contains(queryText);
+            boolean matchesEmail = att.getEmail().toLowerCase().contains(queryText);
+
+            if (matchesName || matchesEmail) {
+                model.addRow(new Object[]{
+                    att.getName(),
+                    att.getEmail(),
+                    att.getTimeIn(),
+                    att.getTimeOut(),
+                    att.getStatus(),
+                    null
+                });
+            }
         }
+
+        panelRound1.revalidate();
+        panelRound1.repaint();
     }
-    
+
     private boolean showConfirm(String title, String message, String subMessage) {
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
         Message obj = new Message(frame);
@@ -107,55 +188,75 @@ public class FormEventAttendees extends JPanel {
         return obj.getMessageType() == Message.MessageType.CONFIRM;
     }
 
+    public void addBackEvent(ActionListener event) {
+        this.backEvent = event;
+    }
+
     private class ActionRenderer extends DefaultTableCellRenderer {
 
-        private ButtonDBoard btn = new ButtonDBoard();
+        private final JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        private final ButtonDBoard btn = new ButtonDBoard();
 
         public ActionRenderer() {
+            panel.setOpaque(false);
             btn.setIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/delete.png")));
+            btn.setOpaque(false);
+            panel.add(btn);
         }
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            if (isSelected) {
-                btn.setBackground(table.getSelectionBackground());
-            } else {
-                btn.setBackground(table.getBackground());
-            }
-            return btn;
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            panel.setBackground(c.getBackground());
+            return panel;
         }
+
     }
 
     private class ActionEditor extends AbstractCellEditor implements TableCellEditor {
 
-        private ButtonDBoard btn = new ButtonDBoard();
-        private int row;
+        private final JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        private final ButtonDBoard btn = new ButtonDBoard();
+        private final AttendanceAction action;
+        private int currentRow;
 
-        public ActionEditor() {
+        public ActionEditor(AttendanceAction action) {
+            this.action = action;
+            panel.setOpaque(false);
+
             btn.setIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/delete.png")));
             btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            btn.setOpaque(false);
 
             btn.addActionListener(e -> {
-                stopCellEditing();
+                int targetRow = table1.getEditingRow();
+                if (targetRow != -1) {
+                    fireEditingStopped();
+                    
+                    String rowEmail = table1.getValueAt(targetRow, 1).toString();
+                    ModelAttendance targetAttendance = null;
 
-                String studentName = table1.getValueAt(row, 0).toString();
-                String studentEmail = table1.getValueAt(row, 1).toString();
+                    for (ModelAttendance att : attendanceList) {
+                        if (att.getEmail().equalsIgnoreCase(rowEmail)) {
+                            targetAttendance = att;
+                            break;
+                        }
+                    }
 
-                if (showConfirm("Confirm Removal", "Remove " + studentName + "?", "This will unregister the student from the event.")) {
-                    ConnectDatabase db = new ConnectDatabase();
-                    if (db.unregisterStudent(studentEmail, selectedEvent.getEventID())) {
-                        ((DefaultTableModel) table1.getModel()).removeRow(row);
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Failed to delete from database.");
+                    if (targetAttendance != null) {
+                        action.delete(targetAttendance, targetRow);
                     }
                 }
             });
+
+            panel.add(btn);
         }
 
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            this.row = row; 
-            return btn;
+            this.currentRow = row;
+            panel.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+            return panel;
         }
 
         @Override
@@ -165,14 +266,13 @@ public class FormEventAttendees extends JPanel {
 
         @Override
         public boolean isCellEditable(EventObject e) {
+            if (e instanceof MouseEvent) {
+                return ((MouseEvent) e).getClickCount() >= 1;
+            }
             return true;
         }
     }
     
-    public void addBackEvent(ActionListener event) {
-        this.backEvent = event;
-    }
-
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -200,7 +300,15 @@ public class FormEventAttendees extends JPanel {
             new String [] {
                 "Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, true, false, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(table1);
 
         javax.swing.GroupLayout panelRound1Layout = new javax.swing.GroupLayout(panelRound1);

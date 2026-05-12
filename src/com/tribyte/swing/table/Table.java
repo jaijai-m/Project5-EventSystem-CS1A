@@ -64,6 +64,13 @@ public class Table extends JTable{
     
     @Override
     public TableCellEditor getCellEditor(int row, int col) {
+        // 1. Check if the specific column has a custom editor explicitly registered via setCellEditor()
+        TableCellEditor columnEditor = getColumnModel().getColumn(col).getCellEditor();
+        if (columnEditor != null) {
+            return columnEditor; // Uses your FormEventAttendees ActionEditor instantly!
+        }
+
+        // 2. Fallback to your default global editor if no column-specific editor is found
         if (col == 4 || col == 5) {
             return new TableCellAction();
         }

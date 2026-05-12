@@ -1,6 +1,7 @@
 package com.tribyte.form;
 
 import com.tribyte.connection.ConnectDatabase;
+import com.tribyte.connection.UserSession;
 import com.tribyte.model.ModelEventStorage;
 import com.tribyte.model.ModelEvents;
 import java.awt.Color;
@@ -64,7 +65,6 @@ public class FormEditingEvent extends JPanel {
         //((AbstractDocument) jTextField5.getDocument()).setDocumentFilter(new NumericFilter());
         ((AbstractDocument) jTextField8.getDocument()).setDocumentFilter(new NumericFilter());
 
-        // Loads data
         if (editingData != null) {
             loadData(editingData);
         }
@@ -73,10 +73,8 @@ public class FormEditingEvent extends JPanel {
     public void loadData(ModelEvents data) {
         jTextField1.setText(data.getName());           
         jTextField2.setText(data.getDate());           
-        //jTextField6.setText(data.getProfessor());      
         jTextField7.setText(data.getVenue());         
         jTextField8.setText(String.valueOf(data.getMaxSlots())); 
-        //jTextField5.setText(String.valueOf(data.getOwnerID())); 
 
         if (data.getAccessibility().equalsIgnoreCase("Private")) {
             chkYes.setSelected(true);
@@ -633,7 +631,6 @@ public class FormEditingEvent extends JPanel {
             String accessibility = chkYes.isSelected() ? "Private" : "Public";
             String status = chkOpen.isSelected() ? "Open" : "Lock";
 
-            // 2. Create the updated model using the ORIGINAL ID and Professor
             if (editingData != null) {
             com.tribyte.model.ModelEvents updatedEvent = new com.tribyte.model.ModelEvents(
                     editingData.getEventID(),
@@ -656,7 +653,10 @@ public class FormEditingEvent extends JPanel {
 
             if (success) {
                 JOptionPane.showMessageDialog(this, "Event Updated Successfully!");
-                ModelEventStorage.loadFromDatabase();
+                String sessionRole = UserSession.getInstance().getRole();
+                int sessionUserId = UserSession.getInstance().getUserId();
+
+                ModelEventStorage.loadFromDatabase(sessionRole, sessionUserId);
 
                 if (backEvent != null) {
                     backEvent.actionPerformed(evt);

@@ -1,6 +1,7 @@
 package com.tribyte.form;
 
 import com.tribyte.connection.ConnectDatabase;
+import com.tribyte.connection.UserSession;
 import com.tribyte.dialog.Message;
 import com.tribyte.model.ModelCard;
 import com.tribyte.model.ModelEventStorage;
@@ -26,7 +27,7 @@ public class FormHome extends JPanel {
     }
 
     public FormHome(String role, int currentUserId) {
-        ModelEventStorage.loadFromDatabase();
+        ModelEventStorage.loadFromDatabase(role, currentUserId);
         this.role = role;
         this.currentUserId = currentUserId;
 
@@ -71,6 +72,7 @@ public class FormHome extends JPanel {
     }
 
     private void initData() {
+        ModelEventStorage.loadFromDatabase(role, currentUserId);
         initCardData();
         initTableData();
     }
@@ -81,14 +83,13 @@ public class FormHome extends JPanel {
             public void delete(ModelEvents events) {
                 if (canModify(events)) {
                     if (showConfirm("Confirm Deletion", "Do you want to delete:\n " + events.getName() + "?", "This action is permanent and will remove all registrations.")) {
-
                         ConnectDatabase db = new ConnectDatabase();
                         if (db.deleteEvent(events.getEventID())) {
-
-                            ModelEventStorage.loadFromDatabase();
-
-                            initTableData();
-
+                            SwingUtilities.invokeLater(() -> {
+                                initData(); 
+                                table1.revalidate();
+                                table1.repaint();
+                            });
                             System.out.println("Event deleted from DB successfully.");
                         } else {
                             showWarning("Database Error", "Failed to delete the event from the database.", "Please contact an admin");
@@ -104,11 +105,18 @@ public class FormHome extends JPanel {
                 if (canModify(events)) {
                     if (showConfirm("Updating Event", "Do you want to edit:\n " + events.getName() + "?", "This will open the editor.")) {
                         if (event != null) {
-                            event.actionPerformed(new ActionEvent(events, ActionEvent.ACTION_PERFORMED, "EDIT_EVENT"));
+                            ActionEvent routingEvent = new ActionEvent(table1, ActionEvent.ACTION_PERFORMED, "EDIT_EVENT") {
+                                @Override
+                                public Object getSource() {
+                                    return events;
+                                }
+                            };
+                            event.actionPerformed(routingEvent);
                         }
                     }
                 } else {
-                    String sub = "This event is not yours. Please ask " + events.getProfessor() + " (the creator) to delete or update it.";
+                    String sub = "You cannot modify this event because you are not its creator (" + events.getProfessor() + "). "
+                            + "Only Staff can edit all events globally.";
                     showWarning("Access Denied", "Action Restricted", sub);
                 }
             }
@@ -129,11 +137,11 @@ public class FormHome extends JPanel {
     }
     
     private boolean canModify(ModelEvents event) {
-        if ("Staff".equals(role)) {
+        if ("Staff".equalsIgnoreCase(role)) {
             return true;
         }
-        if ("Admin".equals(role)) {
-            return event.getOwnerID() == currentUserId;
+        if ("Admin".equalsIgnoreCase(role)) {
+            return event.getOwnerID() == currentUserId; 
         }
         return false;
     }
@@ -155,7 +163,7 @@ public class FormHome extends JPanel {
         if ("Registrant".equals(role)) {
             // Registrant/Student POV
             int joinedCount = db.getCount("registrations", "user_id = " + currentUserId);
-            card1.setData(new ModelCard("Events I Joined", joinedCount, 100, icon1));
+            card1.setData(new ModelCard("Events Joined", joinedCount, 100, icon1));
 
             int attendedCount = db.getCount("registrations", "user_id = " + currentUserId + " AND attendance_status = 'Present'");
             card2.setData(new ModelCard("Events Attended", attendedCount, 100, icon2));
@@ -173,11 +181,23 @@ public class FormHome extends JPanel {
     }  
     
     private boolean showConfirm(String title, String message, String subMessage) {
-    JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-    Message obj = new Message(frame);
-    obj.showMessage(title, message, subMessage);
-    return obj.getMessageType() == Message.MessageType.CONFIRM;
-}
+        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        Message obj = new Message(frame);
+        obj.showMessage(title, message, subMessage);
+
+        if (obj.getMessageType() == com.tribyte.dialog.Message.MessageType.CANCEL) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        System.out.println("[DEBUG] Dialog closed. Chosen MessageType: " + obj.getMessageType());
+        boolean isConfirm = (obj.getMessageType() == com.tribyte.dialog.Message.MessageType.CONFIRM);
+        System.out.println("[DEBUG] showConfirm returning: " + isConfirm);
+        return isConfirm;
+    }
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

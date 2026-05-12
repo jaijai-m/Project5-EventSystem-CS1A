@@ -6,12 +6,12 @@ import java.sql.ResultSet;
 import com.tribyte.connection.UserSession;
 import com.tribyte.connection.ConnectDatabase;
 import com.tribyte.dashboard.main.DashboardMain;
+import com.tribyte.dialog.Notification;
 import com.tribyte.swing.Button;
 import com.tribyte.swing.MyPasswordField;
 import com.tribyte.swing.MyTextField;
 import java.awt.Font;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -20,14 +20,14 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import net.miginfocom.swing.MigLayout;
 
 
-public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
+public class PanelLoginAndRegister extends JLayeredPane {
 
     public PanelLoginAndRegister() {
         initComponents();
@@ -101,7 +101,7 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
     }
     
     private void initLogin() {
-        login.setLayout(new MigLayout("wrap", "push[center]push", "push[]5[]30[]10[]5[]10[]push"));
+        login.setLayout(new MigLayout("wrap", "push[center]push", "push[]5[]30[]10[]5[]25[]25[]push"));
         JLabel label = new JLabel("Sign In");
         label.setFont(new Font("sansserif", Font.BOLD, 50));
         label.setForeground(new Color(4, 149, 22));
@@ -131,7 +131,7 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         txtLoginEmail.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
-                txtLoginEmail.setLineColor(new Color(210, 230, 225)); // Reset to default green-gray
+                txtLoginEmail.setLineColor(new Color(210, 230, 225)); 
                 lblEmailError.setVisible(false);
                 login.revalidate();
             }
@@ -145,13 +145,6 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
                 login.revalidate();
             }
         });                                             
-
-        JButton cmdForget = new JButton("Forgot password?");
-        cmdForget.setForeground(new Color(100, 100, 100));
-        cmdForget.setFont(new Font("sansserif", 1, 12));
-        cmdForget.setContentAreaFilled(false);
-        cmdForget.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        login.add(cmdForget);
 
         Button cmd = new Button();
         cmd.setBackground(new Color(4, 149, 22));
@@ -199,6 +192,8 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
                         }
 
                         dashboard.setVisible(true);
+
+                        new Notification(dashboard, "Welcome, " + fName + "!").showNotification();
 
                         if (loginWindow != null) {
                             loginWindow.dispose();

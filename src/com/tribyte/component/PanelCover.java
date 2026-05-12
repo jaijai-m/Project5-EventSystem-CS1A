@@ -6,8 +6,11 @@ import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
@@ -88,9 +91,9 @@ public class PanelCover extends javax.swing.JPanel {
     protected void paintComponent(Graphics g) {
     Graphics2D g2 = (Graphics2D) g;
     
-    java.net.URL imgURL = getClass().getResource("/com/tribyte/icon/schoolBG.jpg");
+    URL imgURL = getClass().getResource("/com/tribyte/icon/schoolBG.jpg");
     if (imgURL != null) {
-        java.awt.Image bgImage = new javax.swing.ImageIcon(imgURL).getImage();
+        Image bgImage = new ImageIcon(imgURL).getImage();
         
         g2.drawImage(bgImage, 0, 0, getWidth(), getHeight(), this);
     }
@@ -101,8 +104,8 @@ public class PanelCover extends javax.swing.JPanel {
     GradientPaint gra = new GradientPaint(0, 0, color1, 0, getHeight(), color2);
     g2.setPaint(gra);
     g2.fillRect(0, 0, getWidth(), getHeight());
-    g2.setRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION, java.awt.RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-    g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     super.paintComponent(g); 
     }
     

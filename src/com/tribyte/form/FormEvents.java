@@ -1,5 +1,6 @@
 package com.tribyte.form;
 
+import com.tribyte.connection.UserSession;
 import com.tribyte.model.ModelEvents;
 import com.tribyte.swing.EventCellEditor;
 import com.tribyte.swing.EventCellRenderer;
@@ -34,23 +35,19 @@ import net.miginfocom.swing.MigLayout;
             initComponents();
             setOpaque(false);
 
-            // Use wrap 2 as base layout
             setLayout(new MigLayout("fill, wrap 2, insets 12", "[grow, fill]15[grow, fill]", "[]0[]12[]20[grow, fill]"));
             this.removeAll();
 
-            // 1. Title Section
             JPanel titlePanel = new JPanel(new MigLayout("insets 0", "[]5[]", "[]"));
             titlePanel.setOpaque(false);
             titlePanel.add(txt);
             titlePanel.add(lbImage);
-            this.add(titlePanel, "span 2, wrap"); // span 2 matches wrap 2
+            this.add(titlePanel, "span 2, wrap"); 
             this.add(txtSub, "span 2, wrap 20");
 
-            // 2. Button Logic: Only add buttons if NOT a Registrant/Student
             if (!"Registrant".equals(role)) {
                 Font buttonFont = new Font("Segoe UI", Font.BOLD, 28);
 
-                // Setup text based on role
                 if ("Admin".equals(role)) {
                     styleButton(btn1, "Create New Event", buttonFont);
                     styleButton(btn2, "Edit Existing Events", buttonFont);
@@ -59,11 +56,9 @@ import net.miginfocom.swing.MigLayout;
                     styleButton(btn2, "Manage Events", buttonFont);
                 }
 
-                // Add the buttons to the UI
                 add(btn1, "grow, h 150!");
                 add(btn2, "grow, h 150!");
 
-                // Button Listeners
                 btn1.addActionListener(e -> {
                     if (event != null) {
                         event.actionPerformed(new ActionEvent(btn1, ActionEvent.ACTION_PERFORMED, btn1.getText()));
@@ -126,8 +121,11 @@ import net.miginfocom.swing.MigLayout;
             jScrollPane1.setPreferredSize(new Dimension(jScrollPane1.getPreferredSize().width, 800));
         }
         
-        private void initTableData() {
-            ModelEventStorage.loadFromDatabase();
+        public void initTableData() {
+            String sessionRole = UserSession.getInstance().getRole();
+            int sessionUserId = UserSession.getInstance().getUserId();
+
+            ModelEventStorage.loadFromDatabase(sessionRole, sessionUserId);
 
             table1.fixTable(jScrollPane1);
 

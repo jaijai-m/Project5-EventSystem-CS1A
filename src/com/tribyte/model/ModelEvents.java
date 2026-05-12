@@ -19,8 +19,13 @@ public class ModelEvents {
     private String accessibility;
     private String eventCode;
     private boolean joined;
+    private String timeIn = "---";
+    private String timeOut = "---";
 
-    public ModelEvents(int eventID, int ownerID, String name, String date, String venue, int filledSlots, int maxSlots, String status, String joinedTime, String leftTime, String professor, String accessibility, String eventCode) {
+    public ModelEvents(int eventID, int ownerID, String name, String date, String venue,
+            int filledSlots, int maxSlots, String status,
+            String timeIn, String timeOut, 
+            String professor, String accessibility, String eventCode) {
         this.eventID = eventID;
         this.ownerID = ownerID;
         this.name = name;
@@ -29,13 +34,14 @@ public class ModelEvents {
         this.filledSlots = filledSlots;
         this.maxSlots = maxSlots;
         this.status = status;
-        this.joinedTime = joinedTime;
-        this.leftTime = leftTime;
+
+        this.timeIn = timeIn;
+        this.timeOut = timeOut;
+
         this.professor = professor;
         this.accessibility = accessibility;
-        this.eventCode = eventCode; // Fixed this line
+        this.eventCode = eventCode;
     }
-
     public ModelEvents() {
     }
 
@@ -71,7 +77,6 @@ public class ModelEvents {
         return leftTime;
     }
 
-    // Slot Getters
     public int getFilledSlots() {
         return filledSlots;
     }
@@ -102,6 +107,32 @@ public class ModelEvents {
 
     public boolean isUserJoined(int userId) {
         return this.joined;
+    }
+    
+    public String getTimeIn() {
+        return timeIn;
+    }
+
+    public void setTimeIn(String timeIn) {
+        this.timeIn = timeIn;
+    }
+
+    public String getTimeOut() {
+        return timeOut;
+    }
+
+    public void setTimeOut(String timeOut) {
+        this.timeOut = timeOut;
+    }
+    
+    private String userAttendanceStatus = "Pending"; 
+
+    public String getUserAttendanceStatus() {
+        return userAttendanceStatus;
+    }
+
+    public void setUserAttendanceStatus(String userAttendanceStatus) {
+        this.userAttendanceStatus = userAttendanceStatus;
     }
     
     //Table in FormHome

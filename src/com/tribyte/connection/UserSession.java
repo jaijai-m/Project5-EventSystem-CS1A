@@ -28,6 +28,9 @@ public class UserSession {
     }
 
     public String getRole() {
+        if (instance == null) {
+            return "Registrant";
+        }
         return role;
     }
 

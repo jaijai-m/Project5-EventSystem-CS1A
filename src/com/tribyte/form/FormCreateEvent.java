@@ -2,6 +2,7 @@ package com.tribyte.form;
 
 import com.tribyte.connection.ConnectDatabase;
 import com.tribyte.connection.UserSession;
+import com.tribyte.dialog.MessageOneButton;
 import com.tribyte.model.ModelEventStorage;
 import com.tribyte.model.ModelEvents;
 import java.awt.Color;
@@ -9,10 +10,12 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import static javax.swing.BorderFactory.createEmptyBorder;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
-import javax.swing.JOptionPane;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
@@ -609,26 +612,23 @@ public class FormCreateEvent extends JPanel {
         String maxStr = jTextField8.getText().trim();
         String inputCode = jTextField3.getText().trim();
 
+        JFrame parentFrame = (JFrame) javax.swing.SwingUtilities.getWindowAncestor(this);
+        MessageOneButton msg = new MessageOneButton(parentFrame);
+
         if (name.isEmpty() || date.isEmpty() || venue.isEmpty() || maxStr.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this,
-                    "All fields must be filled out before uploading!",
-                    "Input Error",
-                    javax.swing.JOptionPane.WARNING_MESSAGE);
+            msg.showMessage("Input Error", "All fields must be filled out before uploading!");
             return;
         }
-        
+
         try {
-            java.time.LocalDate.parse(date);
-        } catch (java.time.format.DateTimeParseException e) {
-            javax.swing.JOptionPane.showMessageDialog(this,
-                    "Invalid Date Format! Please use YYYY-MM-DD (e.g., 2026-05-10).",
-                    "Format Error",
-                    javax.swing.JOptionPane.ERROR_MESSAGE);
+            LocalDate.parse(date);
+        } catch (DateTimeParseException e) {
+            msg.showMessage("Format Error", "Invalid Date Format! Please use YYYY-MM-DD (e.g., 2026-05-10).");
             return;
         }
 
         if (chkYes.isSelected() && inputCode.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Please provide an Event Code for Private events.");
+            msg.showMessage("Input Error", "Please provide an Event Code for Private events.");
             return;
         }
 
@@ -640,7 +640,7 @@ public class FormCreateEvent extends JPanel {
         try {
             max = Integer.parseInt(maxStr);
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Maximum Slots must be a valid number.");
+            msg.showMessage("Format Error", "Maximum Slots must be a valid number.");
             return;
         }
 
@@ -662,8 +662,14 @@ public class FormCreateEvent extends JPanel {
         ConnectDatabase db = new ConnectDatabase();
         db.saveEvent(newEvent);
 
-        JOptionPane.showMessageDialog(this, "Event Created Successfully!");
-        ModelEventStorage.loadFromDatabase();
+        if (parentFrame != null) {
+            new com.tribyte.dialog.Notification(parentFrame, "Event Created Successfully!").showNotification();
+        }
+
+        String sessionRole = UserSession.getInstance().getRole();
+        int sessionUserId = UserSession.getInstance().getUserId();
+
+        ModelEventStorage.loadFromDatabase(sessionRole, sessionUserId);
 
         if (backEvent != null) {
             backEvent.actionPerformed(evt);

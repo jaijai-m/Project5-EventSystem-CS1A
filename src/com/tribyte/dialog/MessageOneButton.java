@@ -4,7 +4,6 @@ import com.tribyte.swing.Glass;
 import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.text.SimpleAttributeSet;
@@ -12,7 +11,7 @@ import javax.swing.text.StyleConstants;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
 
-public class Message extends JDialog {
+public class MessageOneButton extends JDialog {
 
     private final JFrame fram;
     private Animator animator;
@@ -20,38 +19,26 @@ public class Message extends JDialog {
     private boolean show;
     private MessageType messageType = MessageType.CANCEL;
 
-    public Message(JFrame fram) {
+    public static enum MessageType {
+        CONFIRM, CANCEL
+    }
+
+    public MessageOneButton(JFrame fram) {
         super(fram, true);
         this.fram = fram;
         initComponents();
         init();
     }
-    
+
     private void init() {
         setBackground(new Color(0, 0, 0, 0));
 
-        cmdConfim.addActionListener(e -> {
-            messageType = MessageType.CONFIRM;
-            closeMessage();
-        });
-
-        cmdCancel.addActionListener(e -> {
-            messageType = MessageType.CANCEL; 
-            closeMessage();
-        });
-
-        
         SimpleAttributeSet center = new SimpleAttributeSet();
         StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
-
         txt.setStyledDocument(txt.getStyledDocument());
         txt.getStyledDocument().setParagraphAttributes(0, txt.getStyledDocument().getLength(), center, false);
         txt.setOpaque(false);
         txt.setBackground(new Color(0, 0, 0, 0));
-
-        txtsub.getStyledDocument().setParagraphAttributes(0, txtsub.getStyledDocument().getLength(), center, false);
-        txtsub.setOpaque(false);
-        txtsub.setBackground(new Color(0, 0, 0, 0));
 
         setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -71,7 +58,7 @@ public class Message extends JDialog {
 
             @Override
             public void end() {
-                if (show == false) {
+                if (!show) {
                     dispose();
                     glass.setVisible(false);
                 }
@@ -82,10 +69,15 @@ public class Message extends JDialog {
         animator.setDeceleration(.5f);
         setOpacity(0f);
         glass = new Glass();
+        
+        cmdConfim.addActionListener(e -> {
+            messageType = MessageType.CONFIRM;
+            closeMessage();
+        });
     }
 
-    private void startAnimator (boolean show) {
-        if(animator.isRunning()) {
+    private void startAnimator(boolean show) {
+        if (animator.isRunning()) {
             float f = animator.getTimingFraction();
             animator.stop();
             animator.setStartFraction(1f - f);
@@ -95,50 +87,38 @@ public class Message extends JDialog {
         this.show = show;
         animator.start();
     }
-    public void showMessage(String title, String message, String submessage) {
+
+    public void showMessage(String title, String message) {
         fram.setGlassPane(glass);
         glass.setVisible(true);
+
         lbTitle.setText(title);
         txt.setText(message);
-        txtsub.setText(submessage);
-        pack();
 
-        if (title.toLowerCase().contains("updat")) {
+        if (title.toLowerCase().contains("logout")) {
+            lbTitle.setForeground(new Color(4, 149, 22)); 
+            cmdConfim.setText("Yes, Logout");
+            cmdConfim.setBackground(new Color(250, 82, 82)); 
+        } else if (title.toLowerCase().contains("updat")) {
             cmdConfim.setText("Update Event");
             cmdConfim.setBackground(new Color(4, 149, 22));
             lbTitle.setForeground(new Color(4, 149, 22));
-            lbIcon.setIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/sync.png")));
-        } 
-        else if (title.toLowerCase().contains("denied") || title.toLowerCase().contains("restricted")) {
+        } else {
             cmdConfim.setText("Confirm");
-            cmdConfim.setBackground(new Color(150, 150, 150)); 
-            lbTitle.setForeground(new Color(250, 82, 82)); 
-            lbIcon.setIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/caution.png")));
-        } 
-        else if (title.toLowerCase().contains("delet")
-                || title.toLowerCase().contains("removal")
-                || title.toLowerCase().contains("remov")) { 
-
-            cmdConfim.setText("Confirm"); 
             cmdConfim.setBackground(new Color(250, 82, 82));
             lbTitle.setForeground(new Color(250, 82, 82));
-            lbIcon.setIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/caution.png")));
-        }
-        else {
-            cmdConfim.setText("Confirm");
-            cmdConfim.setBackground(new Color(4, 149, 22));
-            lbTitle.setForeground(new Color(4, 149, 22));
         }
 
+        pack();
         setLocationRelativeTo(fram);
         startAnimator(true);
         setVisible(true);
     }
-    
+
     public void closeMessage() {
         startAnimator(false);
     }
-    
+
     public MessageType getMessageType() {
         return messageType;
     }
@@ -149,11 +129,8 @@ public class Message extends JDialog {
 
         background1 = new com.tribyte.dialog.Background();
         cmdConfim = new com.tribyte.swing.ButtonDBoard();
-        cmdCancel = new com.tribyte.swing.ButtonDBoard();
-        lbIcon = new javax.swing.JLabel();
         lbTitle = new javax.swing.JLabel();
         txt = new javax.swing.JTextPane();
-        txtsub = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
@@ -165,15 +142,6 @@ public class Message extends JDialog {
         cmdConfim.setText("Confirm");
         cmdConfim.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         cmdConfim.addActionListener(this::cmdConfimActionPerformed);
-
-        cmdCancel.setBackground(new java.awt.Color(204, 204, 204));
-        cmdCancel.setForeground(new java.awt.Color(255, 255, 255));
-        cmdCancel.setText("Cancel");
-        cmdCancel.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        cmdCancel.addActionListener(this::cmdCancelActionPerformed);
-
-        lbIcon.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/tribyte/icon/caution.png"))); // NOI18N
 
         lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         lbTitle.setForeground(new java.awt.Color(250, 82, 82));
@@ -188,50 +156,30 @@ public class Message extends JDialog {
         txt.setFocusable(false);
         txt.setPreferredSize(null);
 
-        txtsub.setEditable(false);
-        txtsub.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 20, 1, 20));
-        txtsub.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txtsub.setForeground(new java.awt.Color(76, 76, 76));
-        txtsub.setText("Message Text\nSimple");
-        txtsub.setFocusable(false);
-
         javax.swing.GroupLayout background1Layout = new javax.swing.GroupLayout(background1);
         background1.setLayout(background1Layout);
         background1Layout.setHorizontalGroup(
             background1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, background1Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(cmdCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
-                .addComponent(cmdConfim, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15))
-            .addComponent(lbIcon, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(lbTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, background1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(txtsub)
-                .addContainerGap())
+            .addComponent(lbTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, background1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
+            .addGroup(background1Layout.createSequentialGroup()
+                .addGap(111, 111, 111)
+                .addComponent(cmdConfim, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         background1Layout.setVerticalGroup(
             background1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, background1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lbIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbTitle)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtsub, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(45, 45, 45)
+                .addComponent(lbTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(background1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cmdConfim, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cmdCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(10, 10, 10))
+                .addComponent(txt, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(34, 34, 34)
+                .addComponent(cmdConfim, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -248,27 +196,16 @@ public class Message extends JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void cmdCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdCancelActionPerformed
-        messageType = MessageType.CANCEL;
-        closeMessage();
-    }//GEN-LAST:event_cmdCancelActionPerformed
-
     private void cmdConfimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdConfimActionPerformed
         messageType = MessageType.CONFIRM;
         closeMessage();
     }//GEN-LAST:event_cmdConfimActionPerformed
 
-    public static enum MessageType {
-        CANCEL, CONFIRM
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.tribyte.dialog.Background background1;
-    private com.tribyte.swing.ButtonDBoard cmdCancel;
     private com.tribyte.swing.ButtonDBoard cmdConfim;
-    private javax.swing.JLabel lbIcon;
     private javax.swing.JLabel lbTitle;
     private javax.swing.JTextPane txt;
-    private javax.swing.JTextPane txtsub;
     // End of variables declaration//GEN-END:variables
 }

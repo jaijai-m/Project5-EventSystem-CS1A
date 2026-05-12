@@ -71,8 +71,8 @@ public class ItemEvent extends JPanel {
         lbAccessibility.setText(data.getAccessibility());
 
         lbStatus.setText("Status: " + data.getStatus());
-        lbJoined.setText("Joined: " + data.getJoinedTime());
-        lbLeft.setText("Left: " + data.getLeftTime());
+        lbJoined.setText("Joined: " + data.getTimeIn());
+        lbLeft.setText("Left: " + data.getTimeOut());
 
         lbJoined.setVisible(true);
         lbLeft.setVisible(true);
@@ -155,8 +155,8 @@ public class ItemEvent extends JPanel {
                         .addGap(20, 20, 20)
                         .addComponent(lbAccessibility))
                     .addComponent(lbStatus))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 250, Short.MAX_VALUE)
-                .addComponent(btnJoin, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 200, Short.MAX_VALUE)
+                .addComponent(btnJoin, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
