@@ -1,5 +1,6 @@
 package com.tribyte.login.main;
 
+import com.tribyte.component.EventLogin;
 import com.tribyte.component.PanelCover;
 import com.tribyte.component.PanelLoginAndRegister;
 import java.awt.event.ActionEvent;
@@ -23,6 +24,7 @@ public class Main extends javax.swing.JFrame {
     private final double coverSize = 40;
     private final double loginSize = 60;
     private final DecimalFormat df = new DecimalFormat("##0.##");
+    private Animator animator;
     
     public Main() {
         initComponents();
@@ -33,6 +35,16 @@ public class Main extends javax.swing.JFrame {
         layout = new MigLayout("fill, insets 0, debug");
         cover = new PanelCover();
         loginAndRegister = new PanelLoginAndRegister();
+        
+        loginAndRegister.setEventLogin(new EventLogin() {
+            @Override
+            public void finishedRegistration() {
+                if (!animator.isRunning()) {
+                    animator.start();
+                }
+            }  
+        });
+        
         TimingTarget target = new TimingTargetAdapter(){
             @Override
             public void timingEvent(float fraction) {
@@ -76,7 +88,7 @@ public class Main extends javax.swing.JFrame {
                 isLogin =! isLogin;
             }
         };
-        Animator animator = new Animator(800, target);
+        animator = new Animator(800, target);
         animator.setAcceleration(0.5f);
         animator.setDeceleration(0.5f);
         animator.setResolution(0);

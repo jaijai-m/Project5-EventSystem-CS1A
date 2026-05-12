@@ -3,6 +3,7 @@ package com.tribyte.component;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import com.tribyte.connection.PasswordSecurity;
 import com.tribyte.connection.UserSession;
 import com.tribyte.connection.ConnectDatabase;
 import com.tribyte.dashboard.main.DashboardMain;
@@ -29,6 +30,12 @@ import net.miginfocom.swing.MigLayout;
 
 public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
 
+    private EventLogin event; 
+    
+    public void setEventLogin(EventLogin event){
+        this.event = event;
+    }
+    
     public PanelLoginAndRegister() {
         initComponents();
         initRegister();
@@ -48,30 +55,37 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
         subLabel.setForeground(new Color(4, 149, 22));
         register.add(subLabel);
         String fieldConstraints = "w 50%, h 50";
+        
         txtFName = new MyTextField();
         txtFName.setPrefixIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/user.png")));
         txtFName.setHint("First Name");
         register.add(txtFName, fieldConstraints);
+        
         txtLName = new MyTextField();
         txtLName.setPrefixIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/user.png")));
         txtLName.setHint("Last Name");
         register.add(txtLName, fieldConstraints);
+        
         txtCoInfo = new MyTextField();
         txtCoInfo.setPrefixIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/contact.png")));
         txtCoInfo.setHint("Contact Number");
         register.add(txtCoInfo, fieldConstraints);
+        
         txtEmail = new MyTextField();
         txtEmail.setPrefixIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/mail.png")));
         txtEmail.setHint("example@gordoncollege.edu.ph");
         register.add(txtEmail, fieldConstraints);
+        
         txtPass = new MyPasswordField();
         txtPass.setPrefixIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/pass.png")));
         txtPass.setHint("Password");
         register.add(txtPass, fieldConstraints);
-        MyPasswordField txtConPass = new MyPasswordField();
+        
+        txtConPass = new MyPasswordField();
         txtConPass.setPrefixIcon(new ImageIcon(getClass().getResource("/com/tribyte/icon/pass.png")));
         txtConPass.setHint("Confirm Password");
         register.add(txtConPass, fieldConstraints);
+        
         Button cmd = new Button();
         cmd.setBackground(new Color(4, 149, 22));
         cmd.setForeground(new Color(250, 250, 250));
@@ -86,16 +100,26 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
                 String phone = txtCoInfo.getText();
                 String email = txtEmail.getText();
                 String password = new String(txtPass.getPassword());
+                String confirmPassword = new String(txtConPass.getPassword());
 
-                if (first.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                if (first.isEmpty() || last.isEmpty() || phone.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Please fill in all required fields.");
                     return;
                 }
-
+                
+                if (!password.equals(confirmPassword)) {
+                    JOptionPane.showMessageDialog(null, "Passwords do not match! Please try again.", "Validation Error", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                
                 ConnectDatabase db = new ConnectDatabase();
-                db.registerUser(first, last, email, phone, password);
-
-                JOptionPane.showMessageDialog(null, "Account Created Successfully!");
+                if (db.registerUser(first, last, email, phone, password)) {
+                    JOptionPane.showMessageDialog(null, "Account Created Successfully! \nYou can now Sign In/Log In!");
+                
+                if (event != null) {
+                event.finishedRegistration();
+                }
+                }
             }
         });
     }
@@ -175,11 +199,13 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
                     return;
                 }
 
+                String hashSHA256 = PasswordSecurity.hashSHA256(pass);
+                
                 try (Connection con = ConnectDatabase.conn()) {
                     String sql = "SELECT * FROM users WHERE email=? AND password=?";
                     PreparedStatement pst = con.prepareStatement(sql);
                     pst.setString(1, email);
-                    pst.setString(2, pass);
+                    pst.setString(2, hashSHA256);
                     ResultSet rs = pst.executeQuery();
 
                     if (rs.next()) {
@@ -233,6 +259,7 @@ public class PanelLoginAndRegister extends javax.swing.JLayeredPane {
     private MyTextField txtCoInfo;
     private MyTextField txtEmail;
     private MyPasswordField txtPass;
+    private MyPasswordField txtConPass;
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

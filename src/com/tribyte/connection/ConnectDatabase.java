@@ -5,6 +5,7 @@ import java.sql.*;
 import com.tribyte.model.ModelEvents; 
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 public class ConnectDatabase {
 
@@ -20,20 +21,29 @@ public class ConnectDatabase {
         }
     }
 
-    public void registerUser(String fName, String lName, String email, String phone, String pass) {
+    public boolean registerUser(String fName, String lName, String email, String phone, String pass) {
+        String hashSHA256 = PasswordSecurity.hashSHA256(pass);
+        
         String sql = "INSERT INTO users (first_name, last_name, email, contact_number, password, role) VALUES (?, ?, ?, ?, ?, ?)";
+        boolean success = false;
         try (Connection con = conn(); PreparedStatement pstmt = con.prepareStatement(sql)) {
             pstmt.setString(1, fName);
             pstmt.setString(2, lName);
             pstmt.setString(3, email);
             pstmt.setString(4, phone);
-            pstmt.setString(5, pass);
+            pstmt.setString(5, hashSHA256);
             pstmt.setString(6, "Registrant");
-            pstmt.executeUpdate();
+            
+            int rows = pstmt.executeUpdate();
+            if (rows > 0) {
             System.out.println("User registered successfully!");
+            success = true;
+            }
         } catch (SQLException e) {
-            System.out.println("SQL Error: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Database Error: " + e.getMessage(), "\n Unable to Sign Up!", JOptionPane.ERROR_MESSAGE);
+            success = false;
         }
+        return success;
     }
 
     public void saveEvent(ModelEvents ev) {
