@@ -3,13 +3,13 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 10, 2026 at 11:37 PM
+-- Generation Time: May 12, 2026 at 10:11 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
-SET time_zone = "+08:00";
+SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -48,19 +48,19 @@ CREATE TABLE `events` (
 --
 
 INSERT INTO `events` (`event_id`, `event_name`, `description`, `event_date`, `venue`, `filled_slots`, `max_slots`, `status`, `accessibility`, `event_code`, `professor`, `created_at`, `created_by`) VALUES
-(1, 'Sample Event', NULL, '2026-05-13', 'GC', 0, 4, 'Open', 'Private', '1234', '', '2026-05-06 22:12:58', 1),
-(2, 'Sample2', NULL, '2026-05-15', 'School', 0, 5, 'Open', 'Public', NULL, '', '2026-05-06 22:21:20', 1),
-(3, 'Sample3', NULL, '2026-05-12', 'GC', 0, 5, 'Open', 'Public', NULL, '', '2026-05-06 22:31:18', 1),
-(4, 'sample', NULL, '2026-05-11', 'sample', 0, 3, 'Lock', 'Public', NULL, '', '2026-05-08 22:59:43', 1),
-(5, 'Grad', NULL, '2026-05-20', 'GC', 0, 6, 'Open', 'Public', NULL, '', '2026-05-09 20:43:56', 1),
-(6, 'Party', NULL, '2026-05-20', 'GC', 0, 10, 'Open', 'Public', NULL, '', '2026-05-09 21:01:48', 1),
-(7, 'Quiz Bee', NULL, '2026-05-23', 'GC', 0, 7, 'Open', 'Private', '888', '', '2026-05-09 21:13:02', 12),
-(8, 'sss', NULL, '2026-05-12', 'GC', 0, 2, 'Open', 'Public', NULL, '', '2026-05-09 21:26:41', 1),
-(9, 'eventname12', NULL, '2026-12-12', 'venuevenue', 0, 25, 'Open', 'Private', 'GC-2946', 'Pau Sab', '2026-05-10 09:13:11', 13),
-(10, 'hello', NULL, '2026-10-10', 'idk', 0, 55, 'Open', 'Public', 'GC-3860', 'Pau Sab', '2026-05-10 10:53:31', 13),
-(11, 'its me', NULL, '2026-11-11', 'bahay', 0, 22, 'Open', 'Public', 'GC-8137', 'Pau Sab', '2026-05-10 10:54:06', 13),
-(12, 'i forgor', NULL, '2026-12-12', 'utak na walang laman na', 2, 32, 'Open', 'Public', 'GC-7187', 'Pau Sab', '2026-05-10 11:29:58', 13),
-(13, 'the lyrics', NULL, '2026-12-10', 'labas', 1, 10, 'Open', 'Private', 'GC-7283', 'Pau Sab', '2026-05-10 12:28:51', 13);
+(1, 'Sample Event', NULL, '2026-05-13', 'GC', 0, 4, 'Open', 'Private', '1234', '', '2026-05-06 14:12:58', 1),
+(2, 'Sample2', NULL, '2026-05-15', 'School', 0, 5, 'Open', 'Public', NULL, '', '2026-05-06 14:21:20', 1),
+(3, 'Sample3', NULL, '2026-05-12', 'GC', 0, 5, 'Open', 'Public', NULL, '', '2026-05-06 14:31:18', 1),
+(4, 'sample', NULL, '2026-05-11', 'sample', 0, 3, 'Lock', 'Public', NULL, '', '2026-05-08 14:59:43', 1),
+(5, 'Grad', NULL, '2026-05-20', 'GC', 0, 6, 'Open', 'Public', NULL, '', '2026-05-09 12:43:56', 1),
+(6, 'Party', NULL, '2026-05-20', 'GC', 0, 10, 'Open', 'Public', NULL, '', '2026-05-09 13:01:48', 1),
+(7, 'Quiz Bee', NULL, '2026-05-23', 'GC', 0, 7, 'Open', 'Private', '888', '', '2026-05-09 13:13:02', 12),
+(8, 'sss', NULL, '2026-05-12', 'GC', 0, 2, 'Open', 'Public', NULL, '', '2026-05-09 13:26:41', 1),
+(9, 'eventname12', NULL, '2026-12-12', 'venuevenue', 0, 25, 'Open', 'Private', 'GC-2946', 'Pau Sab', '2026-05-10 01:13:11', 13),
+(10, 'hello', NULL, '2026-10-10', 'idk', 0, 55, 'Open', 'Public', 'GC-3860', 'Pau Sab', '2026-05-10 02:53:31', 13),
+(11, 'its me', NULL, '2026-11-11', 'bahay', 0, 22, 'Open', 'Public', 'GC-8137', 'Pau Sab', '2026-05-10 02:54:06', 13),
+(12, 'i forgor', NULL, '2026-12-12', 'utak na walang laman na', 2, 32, 'Open', 'Public', 'GC-7187', 'Pau Sab', '2026-05-10 03:29:58', 13),
+(13, 'the lyrics', NULL, '2026-12-10', 'labas', 2, 10, 'Open', 'Private', 'GC-7283', 'Pau Sab', '2026-05-10 04:28:51', 13);
 
 -- --------------------------------------------------------
 
@@ -73,20 +73,22 @@ CREATE TABLE `registrations` (
   `user_id` int(11) NOT NULL,
   `event_id` int(11) NOT NULL,
   `attendance_status` enum('Pending','Present','Absent') NOT NULL DEFAULT 'Pending',
-  `registered_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `time_in` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `time_out` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `registrations`
 --
 
-INSERT INTO `registrations` (`registration_id`, `user_id`, `event_id`, `attendance_status`, `registered_at`) VALUES
-(1, 13, 12, 'Pending', '2026-05-10 13:47:17'),
-(2, 13, 11, 'Pending', '2026-05-10 13:47:22'),
-(3, 13, 10, 'Pending', '2026-05-10 13:52:22'),
-(5, 14, 13, 'Pending', '2026-05-10 19:27:18'),
-(6, 13, 13, 'Pending', '2026-05-10 19:50:21'),
-(8, 14, 12, 'Pending', '2026-05-10 20:56:20');
+INSERT INTO `registrations` (`registration_id`, `user_id`, `event_id`, `attendance_status`, `time_in`, `time_out`) VALUES
+(1, 13, 12, 'Pending', '2026-05-10 05:47:17', '2026-05-12 01:31:12'),
+(2, 13, 11, 'Pending', '2026-05-10 05:47:22', '2026-05-12 01:31:12'),
+(3, 13, 10, 'Pending', '2026-05-10 05:52:22', '2026-05-12 01:31:12'),
+(5, 14, 13, 'Pending', '2026-05-10 11:27:18', '2026-05-12 01:31:12'),
+(6, 13, 13, 'Pending', '2026-05-10 11:50:21', '2026-05-12 01:31:12'),
+(8, 14, 12, 'Pending', '2026-05-10 12:56:20', '2026-05-12 01:31:12'),
+(9, 16, 13, 'Pending', '2026-05-11 01:28:16', '2026-05-12 01:31:12');
 
 -- --------------------------------------------------------
 
@@ -111,14 +113,15 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `first_name`, `middle_name`, `last_name`, `email`, `contact_number`, `password`, `created_at`, `role`) VALUES
-(1, 'Jaijai', NULL, 'Mnglndn', 'admin12026@gordoncollege.edu.ph', '09123456789', '0c863bdff61b51b20c005ae25d4a6eab8f8cb00536fb53d4132edcdc3cbd8c9e', '2026-04-16 02:08:44', 'Admin'),
-(2, 'Pau', NULL, 'Sabando', '202611@gordoncollege.edu.ph', '09111111111', '334d016f755cd6dc58c53a86e183882f8ec14f52fb05345887c8a5edd42c87b7', '2026-05-02 07:34:47', 'Registrant'),
-(9, 'Dummy', NULL, 'Dummy', 'sample@gordoncollege.edu.ph', '09333333333', '17533be2a3b9545ddfc2d6adbe7b38c2b7b790d1df10d8056b10b8752e456a68', '2026-05-03 01:13:46', 'Registrant'),
-(10, 'Sample', NULL, 'Sample', 'example@gordoncollege.edu.ph', '09123456789', '74446438f96dd72002057f6c3a3cc7d32ec9f9c6def95ae4a4ded33485b8f2cc', '2026-05-03 01:24:10', 'Registrant'),
-(11, 'Samplee', NULL, 'Samplee', 'sample', '09321321321', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', '2026-05-08 14:42:16', 'Registrant'),
-(12, 'Pau', NULL, 'Sabando', 'admin2@gordoncollege.edu.ph', '09999888777', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', '2026-05-09 21:11:05', 'Admin'),
-(13, 'Pau', NULL, 'Sab', 'admin@gmail.com', '1234', 'admin123', '2026-05-10 07:05:12', 'Admin'),
-(14, 'Richelle', NULL, 'Calba', 'sample@gmail.com', '99009090', 'password123', '2026-05-10 19:25:57', 'Registrant');
+(1, 'Jaijai', NULL, 'Mnglndn', 'admin12026@gordoncollege.edu.ph', '09123456789', '0c863bdff61b51b20c005ae25d4a6eab8f8cb00536fb53d4132edcdc3cbd8c9e', '2026-04-15 18:08:44', 'Admin'),
+(2, 'Pau', NULL, 'Sabando', '202611@gordoncollege.edu.ph', '09111111111', '334d016f755cd6dc58c53a86e183882f8ec14f52fb05345887c8a5edd42c87b7', '2026-05-01 23:34:47', 'Registrant'),
+(9, 'Dummy', NULL, 'Dummy', 'sample@gordoncollege.edu.ph', '09333333333', '17533be2a3b9545ddfc2d6adbe7b38c2b7b790d1df10d8056b10b8752e456a68', '2026-05-02 17:13:46', 'Registrant'),
+(10, 'Sample', NULL, 'Sample', 'example@gordoncollege.edu.ph', '09123456789', '74446438f96dd72002057f6c3a3cc7d32ec9f9c6def95ae4a4ded33485b8f2cc', '2026-05-02 17:24:10', 'Registrant'),
+(11, 'Samplee', NULL, 'Samplee', 'sample', '09321321321', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', '2026-05-08 06:42:16', 'Registrant'),
+(12, 'Pau', NULL, 'Sabando', 'admin2@gordoncollege.edu.ph', '09999888777', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', '2026-05-09 13:11:05', 'Admin'),
+(13, 'Pau', NULL, 'Sab', 'admin@gmail.com', '1234', 'admin123', '2026-05-09 23:05:12', 'Admin'),
+(14, 'Richelle', NULL, 'Calba', 'sample@gmail.com', '99009090', 'password123', '2026-05-10 11:25:57', 'Registrant'),
+(16, 'Neu Neym', NULL, 'Project', 'admin2468@gordoncollege.edu.ph', '0911', '2468', '2026-05-11 01:24:20', 'Registrant');
 
 --
 -- Indexes for dumped tables
@@ -137,7 +140,8 @@ ALTER TABLE `events`
 ALTER TABLE `registrations`
   ADD PRIMARY KEY (`registration_id`),
   ADD UNIQUE KEY `unique_user_event` (`user_id`,`event_id`),
-  ADD KEY `fk_user_id` (`user_id`);
+  ADD KEY `fk_user_id` (`user_id`),
+  ADD KEY `registrations_ibfk_1` (`event_id`);
 
 --
 -- Indexes for table `users`
@@ -160,13 +164,13 @@ ALTER TABLE `events`
 -- AUTO_INCREMENT for table `registrations`
 --
 ALTER TABLE `registrations`
-  MODIFY `registration_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `registration_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- Constraints for dumped tables
