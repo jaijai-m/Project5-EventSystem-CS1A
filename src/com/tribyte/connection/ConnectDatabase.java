@@ -24,6 +24,11 @@ public class ConnectDatabase {
     public boolean registerUser(String fName, String lName, String email, String phone, String pass) {
         String hashSHA256 = PasswordSecurity.hashSHA256(pass);
         
+        if (!email.endsWith("@gordoncollege.edu.ph")) {
+            JOptionPane.showMessageDialog(null, "Registration failed: Invalid domain. \nDomain should end with @gordoncollege.edu.ph", "Invalid Domain", JOptionPane.ERROR_MESSAGE);
+        return false;
+        }
+        
         String sql = "INSERT INTO users (first_name, last_name, email, contact_number, password, role) VALUES (?, ?, ?, ?, ?, ?)";
         boolean success = false;
         try (Connection con = conn(); PreparedStatement pstmt = con.prepareStatement(sql)) {
