@@ -11,7 +11,7 @@ public class ConnectDatabase {
 
     public static Connection conn() {
         try {
-            String url = "jdbc:mysql://localhost:3306/db_event_management2";
+            String url = "jdbc:mysql://localhost:3306/db_event_management3";
             String user = "root";
             String password = "";
             return DriverManager.getConnection(url, user, password);
@@ -27,6 +27,11 @@ public class ConnectDatabase {
         if (!email.endsWith("@gordoncollege.edu.ph")) {
             JOptionPane.showMessageDialog(null, "Registration failed: Invalid domain. \nDomain should end with @gordoncollege.edu.ph", "Invalid Domain", JOptionPane.ERROR_MESSAGE);
         return false;
+        }
+        
+        if (phone.length() != 11 ) {
+            JOptionPane.showMessageDialog(null, "Registration failed: Invalid length of contact number. \nIt should contain exactly 11 digits!", "Invalid Contact Number", JOptionPane.WARNING_MESSAGE);
+            return false;
         }
         
         String sql = "INSERT INTO users (first_name, last_name, email, contact_number, password, role) VALUES (?, ?, ?, ?, ?, ?)";
